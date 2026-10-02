@@ -68,18 +68,20 @@
     .qtext{font-size:17px;font-weight:700;padding-top:4px}
     .answer{display:grid;grid-template-columns:34px 1fr;gap:10px;padding:11px 12px;border-radius:11px;background:#f9fafb;margin:8px 0;border:1px solid #eaecf0}
     .letter{font-weight:800;color:var(--green-dark)}
-    .score-label{font-size:13px;color:var(--muted);margin:14px 0 7px}
-    .score-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
-    .score-btn{
-      border:1px solid #dfe3e8;background:#fff;border-radius:9px;padding:10px 6px;cursor:pointer;
-      color:#344054;transition:.12s ease;font-size:15px;
+    .score-label{font-size:13px;color:var(--muted);margin:14px 0 8px}
+    .score-slider-row{
+      display:grid;grid-template-columns:72px minmax(120px,1fr) 72px;gap:12px;align-items:center;
+      padding:10px 12px;border:1px solid #e4e7ec;border-radius:12px;background:#fbfcfd;
     }
-    .score-btn:hover{border-color:#9bcfaa;background:#f8fcf9}
-    .score-btn.selected{background:#eefaf1;color:#1f5131;border-color:#69bb80;box-shadow:none}
-    .score-line{display:flex;justify-content:center;align-items:baseline;gap:5px;line-height:1.25;font-size:15px;font-weight:700}
-    .score-line + .score-line{margin-top:3px}
-    .score-letter,.score-number{font-weight:700}
-    .score-btn.selected .score-line{font-weight:800}
+    .score-end{display:flex;align-items:baseline;justify-content:center;gap:6px;font-size:16px;font-weight:800;color:#344054;white-space:nowrap}
+    .score-end .score-live{min-width:18px;text-align:center;color:var(--green-dark);font-size:18px}
+    .range-wrap{position:relative;padding:2px 0 18px}
+    .score-range{-webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:999px;background:#e4e7ec;outline:none;margin:0;cursor:pointer}
+    .score-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:26px;height:26px;border-radius:50%;background:var(--green);border:3px solid #fff;box-shadow:0 1px 5px rgba(16,24,40,.25);cursor:pointer}
+    .score-range::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--green);border:3px solid #fff;box-shadow:0 1px 5px rgba(16,24,40,.25);cursor:pointer}
+    .slider-hint{position:absolute;left:0;right:0;bottom:-1px;text-align:center;font-size:11px;color:#98a2b3;pointer-events:none}
+    .question.answered .score-slider-row{border-color:#a7d8b7;background:#f8fcf9}
+    .question.answered .slider-hint{display:none}
     .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:20px}
     button.primary,button.secondary{
       border:0;border-radius:11px;padding:12px 18px;font-size:15px;font-weight:800;cursor:pointer;
@@ -136,7 +138,7 @@
     .footer{font-size:12px;color:#667085;margin-top:20px;text-align:center}
     @media (max-width:680px){
       h1{font-size:28px}.hero{padding:22px 20px}.panel{padding:18px}.question{padding:17px 15px}.qtext{font-size:16px}
-      .score-grid{grid-template-columns:repeat(3,1fr)}.score-cards{grid-template-columns:1fr}.chart-head-row,.chart-row{grid-template-columns:36px 1fr}.y-title{font-size:12px}
+      .score-slider-row{grid-template-columns:58px minmax(110px,1fr) 58px;gap:8px;padding:10px 8px}.score-end{font-size:15px}.score-end .score-live{font-size:17px}.score-cards{grid-template-columns:1fr}.chart-head-row,.chart-row{grid-template-columns:36px 1fr}.y-title{font-size:12px}
       .axis-top{font-size:9px}
     }
     @media print{
@@ -156,11 +158,7 @@
   <section class="panel instructions">
     <h2>Как отвечать</h2>
     <p>В каждом вопросе у вас есть <b>5 баллов</b>, которые нужно распределить между вариантами А и В. Чем больше баллов получает вариант, тем больше он подходит вам.</p>
-    <p>Выберите одну комбинацию. Сумма баллов вариантов А и В всегда равна 5.</p>
-    <div class="pair-examples">
-      <span class="chip">А 0 · В 5</span><span class="chip">А 1 · В 4</span><span class="chip">А 2 · В 3</span>
-      <span class="chip">А 3 · В 2</span><span class="chip">А 4 · В 1</span><span class="chip">А 5 · В 0</span>
-    </div>
+    <p>Передвигайте ползунок между вариантами А и В. Чем ближе ползунок к варианту, тем больше баллов он получает. Сумма всегда равна 5.</p>
   </section>
 
   <div class="sticky">
@@ -332,26 +330,35 @@ function renderQuestions(){
     const card=document.createElement('section');
     card.className='panel question';
     card.id='q'+(i+1);
-    const buttons = [0,1,2,3,4,5].map(a=>`<button type="button" class="score-btn" data-q="${i}" data-a="${a}" aria-label="А ${a}, В ${5-a}"><div class="score-line"><span class="score-letter">А</span><span class="score-number">${a}</span></div><div class="score-line"><span class="score-letter">В</span><span class="score-number">${5-a}</span></div></button>`).join('');
     card.innerHTML=`
       <div class="qhead"><div class="qnum">${i+1}</div><div class="qtext">${item.q}</div></div>
       <div class="answer"><div class="letter">А</div><div>${item.a}</div></div>
       <div class="answer"><div class="letter">В</div><div>${item.b}</div></div>
       <div class="score-label">Распределите 5 баллов между вариантами А и В:</div>
-      <div class="score-grid">${buttons}</div>`;
+      <div class="score-slider-row">
+        <div class="score-end"><span>А</span><span class="score-live" id="aVal${i}">—</span></div>
+        <div class="range-wrap">
+          <input class="score-range" type="range" min="0" max="5" step="1" value="2" data-q="${i}" aria-label="Распределение баллов между вариантами А и В">
+          <div class="slider-hint">Передвиньте ползунок</div>
+        </div>
+        <div class="score-end"><span>В</span><span class="score-live" id="bVal${i}">—</span></div>
+      </div>`;
     questionsEl.appendChild(card);
   });
 
-  document.querySelectorAll('.score-btn').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      const q=Number(btn.dataset.q), a=Number(btn.dataset.a);
+  document.querySelectorAll('.score-range').forEach(slider=>{
+    const applySliderValue=()=>{
+      const q=Number(slider.dataset.q);
+      const b=Number(slider.value);
+      const a=5-b;
       responses[q]=a;
-      const card=document.getElementById('q'+(q+1));
-      card.querySelectorAll('.score-btn').forEach(b=>b.classList.remove('selected'));
-      btn.classList.add('selected');
-      card.classList.add('answered');
+      document.getElementById(`aVal${q}`).textContent=a;
+      document.getElementById(`bVal${q}`).textContent=b;
+      document.getElementById('q'+(q+1)).classList.add('answered');
       updateProgress();
-    });
+    };
+    slider.addEventListener('input',applySliderValue);
+    slider.addEventListener('change',applySliderValue);
   });
 }
 
@@ -477,7 +484,8 @@ document.getElementById('calcBtn').addEventListener('click',calculate);
 document.getElementById('resetBtn').addEventListener('click',()=>{
   if(!confirm('Очистить все ответы?')) return;
   responses.fill(null);
-  document.querySelectorAll('.score-btn').forEach(b=>b.classList.remove('selected'));
+  document.querySelectorAll('.score-range').forEach(s=>{s.value=2;});
+  document.querySelectorAll('.score-live').forEach(el=>{el.textContent='—';});
   document.querySelectorAll('.question').forEach(c=>c.classList.remove('answered'));
   document.getElementById('results').classList.remove('show');
   updateProgress();
