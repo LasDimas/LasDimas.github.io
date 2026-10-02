@@ -338,7 +338,7 @@ function renderQuestions(){
       <div class="score-slider-row">
         <div class="score-end"><span>А</span><span class="score-live" id="aVal${i}">—</span></div>
         <div class="range-wrap">
-          <input class="score-range" type="range" min="0" max="5" step="1" value="2" data-q="${i}" aria-label="Распределение баллов между вариантами А и В">
+          <input class="score-range" type="range" min="0" max="5" step="0.5" value="2.5" data-q="${i}" aria-label="Распределение баллов между вариантами А и В">
           <div class="slider-hint">Передвиньте ползунок</div>
         </div>
         <div class="score-end"><span>В</span><span class="score-live" id="bVal${i}">—</span></div>
@@ -349,7 +349,8 @@ function renderQuestions(){
   document.querySelectorAll('.score-range').forEach(slider=>{
     const applySliderValue=()=>{
       const q=Number(slider.dataset.q);
-      const b=Number(slider.value);
+      const b=Math.round(Number(slider.value));
+      slider.value=b;
       const a=5-b;
       responses[q]=a;
       document.getElementById(`aVal${q}`).textContent=a;
@@ -484,7 +485,7 @@ document.getElementById('calcBtn').addEventListener('click',calculate);
 document.getElementById('resetBtn').addEventListener('click',()=>{
   if(!confirm('Очистить все ответы?')) return;
   responses.fill(null);
-  document.querySelectorAll('.score-range').forEach(s=>{s.value=2;});
+  document.querySelectorAll('.score-range').forEach(s=>{s.value=2.5;});
   document.querySelectorAll('.score-live').forEach(el=>{el.textContent='—';});
   document.querySelectorAll('.question').forEach(c=>c.classList.remove('answered'));
   document.getElementById('results').classList.remove('show');
