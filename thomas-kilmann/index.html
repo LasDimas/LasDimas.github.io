@@ -178,7 +178,7 @@
 
   <section class="panel instructions">
     <h2>Как отвечать</h2>
-    <p>В каждой из <b>30 пар</b> выберите одно утверждение, которое точнее описывает ваше поведение в рабочих конфликтах.</p>
+    <p>В каждой из <b>30 пар</b> выберите вариант <b>А или Б</b>, который точнее описывает ваше поведение в рабочих конфликтах.</p>
     <p>Ориентируйтесь на <b>последние 6–12 месяцев</b>. Некоторые формулировки повторяются — это нормально.</p>
     <div class="mini-note">Здесь нет «правильных» ответов. Выбирайте то, что больше похоже на ваше реальное поведение, а не на то, как хотелось бы поступать.</div>
   </section>
@@ -359,8 +359,8 @@ function renderQuestions(){
     card.innerHTML=`
       <div class="qhead"><div class="qnum">${i+1}</div><div class="qtext">Выберите одно утверждение</div></div>
       <div class="options" role="group" aria-label="Вопрос ${i+1}">
-        <button class="option" type="button" data-q="${i}" data-choice="0" aria-pressed="false"><span class="badge">1</span><span class="text">${pair[0]}</span></button>
-        <button class="option" type="button" data-q="${i}" data-choice="1" aria-pressed="false"><span class="badge">2</span><span class="text">${pair[1]}</span></button>
+        <button class="option" type="button" data-q="${i}" data-choice="0" aria-pressed="false"><span class="badge">А</span><span class="text">${pair[0]}</span></button>
+        <button class="option" type="button" data-q="${i}" data-choice="1" aria-pressed="false"><span class="badge">Б</span><span class="text">${pair[1]}</span></button>
       </div>`;
     root.appendChild(card);
   });
