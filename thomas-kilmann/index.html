@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f5132" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'" />
+  <title>Стратегии поведения в конфликте — Томас–Килман</title>
+  <style>
+    :root{
+      --green:#16a34a;
+      --green-dark:#166534;
+      --green-deep:#0f5132;
+      --green-soft:#dcfce7;
+      --ink:#172033;
+      --muted:#667085;
+      --line:#d0d5dd;
+      --paper:#ffffff;
+      --bg:#f3f5f7;
+      --amber:#f59e0b;
+      --shadow:0 5px 18px rgba(16,24,40,.06);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+    body{
+      margin:0;
+      font-family:Arial,Helvetica,sans-serif;
+      color:var(--ink);
+      background:var(--bg);
+      line-height:1.45;
+    }
+    button,input{font:inherit}
+    .wrap{max-width:980px;margin:0 auto;padding:28px 18px 64px}
+    .hero{
+      background:linear-gradient(135deg,#0f5132 0%,#17803f 100%);
+      color:white;
+      border-radius:20px;
+      padding:28px 30px;
+      box-shadow:0 12px 30px rgba(15,81,50,.18);
+    }
+    h1{font-size:34px;line-height:1.1;margin:0 0 10px}
+    .subtitle{font-size:17px;margin:0;opacity:.94}
+    .privacy{margin-top:14px;font-size:13px;opacity:.84}
+    .panel{
+      background:var(--paper);
+      border:1px solid #e4e7ec;
+      border-radius:18px;
+      padding:24px;
+      margin-top:18px;
+      box-shadow:var(--shadow);
+    }
+    .instructions h2,.results h2{margin:0 0 12px;font-size:23px}
+    .instructions p{margin:8px 0}
+    .mini-note{margin-top:12px;padding:11px 13px;border-radius:12px;background:#f8fafc;border:1px solid #e4e7ec;font-size:13px;color:#475467}
+    .sticky{
+      position:sticky;top:8px;z-index:20;
+      margin:14px 0;
+      background:rgba(255,255,255,.96);
+      backdrop-filter:blur(8px);
+      -webkit-backdrop-filter:blur(8px);
+      border:1px solid #e4e7ec;
+      border-radius:14px;
+      padding:12px 14px;
+      box-shadow:0 5px 18px rgba(16,24,40,.07);
+    }
+    .progress-row{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;font-weight:700}
+    .bar{height:9px;background:#e9ecef;border-radius:999px;overflow:hidden;margin-top:8px}
+    .bar>div{height:100%;width:0;background:var(--green);transition:width .2s ease}
+    .question{padding:22px 22px 20px;margin-top:14px;scroll-margin-top:92px}
+    .question.answered{border-color:#a7d8b7;box-shadow:0 5px 18px rgba(22,163,74,.07)}
+    .qhead{display:flex;align-items:flex-start;gap:12px;margin-bottom:13px}
+    .qnum{flex:0 0 34px;height:34px;border-radius:50%;background:#ecfdf3;color:var(--green-dark);display:grid;place-items:center;font-weight:800}
+    .qtext{font-size:15px;font-weight:700;padding-top:5px;color:#475467}
+    .options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .option{
+      width:100%;text-align:left;border:1px solid #e4e7ec;border-radius:13px;background:#f9fafb;color:var(--ink);
+      padding:14px 14px;cursor:pointer;display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;
+      transition:border-color .15s ease,background .15s ease,box-shadow .15s ease,transform .05s ease;
+      min-height:100%;
+    }
+    .option:hover{border-color:#b9c0c8;background:#fff}
+    .option:active{transform:translateY(1px)}
+    .option:focus-visible{outline:3px solid rgba(22,163,74,.22);outline-offset:2px}
+    .option .badge{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#eef2f6;color:#344054;font-weight:900}
+    .option .text{font-size:16px;line-height:1.42;padding-top:3px}
+    .option.selected{border-color:#75c98e;background:#f2fbf5;box-shadow:0 0 0 2px rgba(22,163,74,.08)}
+    .option.selected .badge{background:var(--green);color:white}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:20px}
+    button.primary,button.secondary{
+      border:0;border-radius:11px;padding:12px 18px;font-size:15px;font-weight:800;cursor:pointer;
+      min-height:44px;
+    }
+    button.primary{background:var(--green);color:white}
+    button.primary:disabled{background:#b7c0ba;cursor:not-allowed}
+    button.secondary{background:#eef2f6;color:#344054}
+    .hint{font-size:13px;color:var(--muted)}
+    .results{display:none;margin-top:22px;scroll-margin-top:20px}
+    .results.show{display:block}
+    .result-summary{margin:0 0 16px;padding:13px 15px;border-radius:12px;background:#f8fafc;border:1px solid #e4e7ec;font-size:14px;color:#475467}
+    .score-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:15px 0 22px}
+    .score-card{border:1px solid #e4e7ec;border-radius:14px;padding:13px 12px;background:#fbfcfd;min-width:0}
+    .score-card.is-max{border-color:#86d19b;background:#f3fbf5}
+    .score-card .name{font-size:12px;color:var(--muted);margin-bottom:5px;line-height:1.25}
+    .score-card .value{font-size:27px;font-weight:900;color:var(--green-dark);line-height:1}
+    .score-card .max{font-size:13px;color:var(--muted);font-weight:400}
+    .section-title{font-size:18px;font-weight:900;margin:24px 0 10px}
+    .bars{display:grid;gap:10px}
+    .bar-row{display:grid;grid-template-columns:150px 1fr 54px;gap:10px;align-items:center}
+    .bar-name{font-size:14px;font-weight:700}
+    .bar-track{height:16px;background:#edf0f2;border-radius:999px;overflow:hidden}
+    .bar-fill{height:100%;width:0;background:linear-gradient(90deg,#2ca85a,#16813f);border-radius:999px;transition:width .45s ease}
+    .bar-score{text-align:right;font-size:14px;font-weight:900;color:#344054}
+    .strategy-map-wrap{max-width:650px;margin:18px auto 6px}
+    .map-x-title{text-align:center;font-weight:800;font-size:14px;margin:0 0 7px;color:#344054}
+    .map-row{display:grid;grid-template-columns:38px 1fr;gap:8px;align-items:stretch}
+    .map-y-title{writing-mode:vertical-rl;transform:rotate(180deg);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#344054;text-align:center}
+    .strategy-map{position:relative;aspect-ratio:1/1;border-left:2px solid #667085;border-bottom:2px solid #667085;background:#fff;overflow:hidden;border-radius:3px}
+    .strategy-map:before,.strategy-map:after{content:"";position:absolute;background:#d0d5dd;z-index:0}
+    .strategy-map:before{left:50%;top:0;bottom:0;width:1px}
+    .strategy-map:after{top:50%;left:0;right:0;height:1px}
+    .axis-arrow-x,.axis-arrow-y{position:absolute;color:#667085;font-size:18px;font-weight:900;z-index:2}
+    .axis-arrow-x{right:5px;bottom:-2px}
+    .axis-arrow-y{left:-1px;top:0}
+    .point{position:absolute;transform:translate(-50%,-50%);z-index:3;text-align:center;min-width:76px}
+    .bubble{margin:0 auto 5px;border-radius:50%;background:var(--green);color:white;display:grid;place-items:center;font-weight:900;box-shadow:0 5px 16px rgba(22,129,63,.2);border:3px solid white;outline:1px solid rgba(22,129,63,.22);transition:width .35s,height .35s,opacity .35s}
+    .point-label{font-size:clamp(10px,2.4vw,14px);font-weight:800;line-height:1.15;background:rgba(255,255,255,.88);padding:2px 4px;border-radius:5px;white-space:nowrap}
+    .p-compete{left:21%;top:20%}.p-collab{left:79%;top:20%}.p-compromise{left:50%;top:50%}.p-avoid{left:21%;top:80%}.p-accommodate{left:79%;top:80%}
+    .legend-note{font-size:12px;color:#667085;text-align:center;margin-top:8px}
+    .strategy-info{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+    details{border:1px solid #e4e7ec;border-radius:12px;background:#fbfcfd;padding:0 13px}
+    summary{cursor:pointer;padding:12px 0;font-weight:800;font-size:14px}
+    details p{font-size:13px;color:#475467;margin:0 0 12px}
+    .result-note{margin:18px 0 0;padding:14px 16px;border-radius:12px;background:#f8fafc;border:1px solid #e4e7ec;font-size:14px;color:#475467}
+    .reflection-block{margin-top:22px;padding:18px;border:1px solid #cfe8d7;border-radius:15px;background:#f6fbf7}
+    .reflection-block .section-title{margin:0 0 8px}
+    .reflection-intro{margin:0 0 14px;color:#475467;font-size:14px}
+    .reflection-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .reflection-item{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start;background:#fff;border:1px solid #dfe7e2;border-radius:12px;padding:12px 13px;font-size:14px;color:#344054}
+    .reflection-item .rnum{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#dcfce7;color:#166534;font-weight:900}
+    .reflection-foot{margin:12px 0 0;font-size:13px;color:#667085}
+    .copy-ok{display:none;color:var(--green-dark);font-size:13px;font-weight:700}
+    .copy-ok.show{display:inline}
+    .footer{font-size:12px;color:#667085;margin-top:20px;text-align:center}
+    .error{display:none;margin-top:14px;padding:12px 14px;background:#fff1f2;color:#9f1239;border:1px solid #fecdd3;border-radius:12px;font-size:13px;font-weight:700}
+    @media (max-width:760px){
+      .score-cards{grid-template-columns:repeat(2,1fr)}
+      .strategy-info{grid-template-columns:1fr}
+      .reflection-grid{grid-template-columns:1fr}
+    }
+    @media (max-width:680px){
+      .wrap{padding:16px 12px 44px}
+      h1{font-size:28px}.hero{padding:22px 20px;border-radius:17px}.panel{padding:18px;border-radius:15px}.question{padding:17px 15px}.qtext{font-size:14px}
+      .options{grid-template-columns:1fr;gap:8px}.option{padding:12px 12px}.option .text{font-size:15px}
+      .sticky{top:6px;margin:10px 0;padding:10px 12px}
+      .score-cards{grid-template-columns:1fr 1fr}.score-card .value{font-size:25px}
+      .bar-row{grid-template-columns:112px 1fr 48px;gap:7px}.bar-name{font-size:12px}.bar-score{font-size:12px}
+      .map-row{grid-template-columns:30px 1fr}.map-y-title{font-size:11px}.point{min-width:64px}.point-label{white-space:normal;max-width:98px}
+      button.primary,button.secondary{flex:1 1 auto}
+    }
+    @media (max-width:390px){
+      .score-cards{grid-template-columns:1fr}
+      .bar-row{grid-template-columns:95px 1fr 42px}
+      h1{font-size:25px}
+    }
+    @media print{
+      body{background:white}.wrap{max-width:none;padding:0}.hero,.instructions,.sticky,#questions,.actions,.footer{display:none!important}
+      .panel{box-shadow:none;border:0}.results{display:block!important;margin:0}.strategy-info{display:none}.result-note{font-size:12px}.score-cards{grid-template-columns:repeat(5,1fr)}
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <h1>Стратегии поведения в конфликте</h1>
+    <p class="subtitle">Опросник на основе модели Томаса–Килмана: 30 пар утверждений о поведении в рабочих конфликтах.</p>
+    <div class="privacy">Все ответы и результаты обрабатываются только в вашем браузере и никуда не отправляются.</div>
+  </section>
+
+  <section class="panel instructions">
+    <h2>Как отвечать</h2>
+    <p>В каждой из <b>30 пар</b> выберите одно утверждение, которое точнее описывает ваше поведение в рабочих конфликтах.</p>
+    <p>Ориентируйтесь на <b>последние 6–12 месяцев</b>. Некоторые формулировки повторяются — это нормально.</p>
+    <div class="mini-note">Здесь нет «правильных» ответов. Выбирайте то, что больше похоже на ваше реальное поведение, а не на то, как хотелось бы поступать.</div>
+  </section>
+
+  <div class="sticky">
+    <div class="progress-row"><span>Заполнено</span><span id="progressText">0 / 30</span></div>
+    <div class="bar"><div id="progressBar"></div></div>
+  </div>
+
+  <main id="questions"></main>
+
+  <section class="panel">
+    <div class="actions">
+      <button class="primary" id="calcBtn" disabled>Показать мой профиль</button>
+      <button class="secondary" id="resetBtn" type="button">Очистить ответы</button>
+      <span class="hint" id="completeHint">Ответьте на все 30 вопросов.</span>
+    </div>
+    <div class="error" id="errorBox"></div>
+  </section>
+
+  <section class="panel results" id="results">
+    <h2>Ваш результат</h2>
+    <div class="result-summary" id="resultSummary"></div>
+
+    <div class="score-cards" id="scoreCards"></div>
+
+    <div class="section-title">Профиль стратегий</div>
+    <div class="bars" id="bars"></div>
+
+    <div class="section-title">Карта модели Томаса–Килмана</div>
+    <div class="strategy-map-wrap">
+      <div class="map-x-title">Интересы другой стороны →</div>
+      <div class="map-row">
+        <div class="map-y-title">Свои интересы →</div>
+        <div class="strategy-map" aria-label="Карта стратегий Томаса–Килмана">
+          <div class="axis-arrow-y">↑</div><div class="axis-arrow-x">→</div>
+          <div class="point p-compete" data-strategy="D"><div class="bubble">0</div><div class="point-label">Конкуренция</div></div>
+          <div class="point p-collab" data-strategy="E"><div class="bubble">0</div><div class="point-label">Сотрудничество</div></div>
+          <div class="point p-compromise" data-strategy="C"><div class="bubble">0</div><div class="point-label">Компромисс</div></div>
+          <div class="point p-avoid" data-strategy="A"><div class="bubble">0</div><div class="point-label">Уклонение</div></div>
+          <div class="point p-accommodate" data-strategy="B"><div class="bubble">0</div><div class="point-label">Приспособление</div></div>
+        </div>
+      </div>
+      <div class="legend-note">Чем больше круг, тем чаще эта стратегия выбиралась в 30 парах.</div>
+    </div>
+
+    <div class="strategy-info">
+      <details><summary>Конкуренция</summary><p>Фокус на собственных интересах и настойчивое продвижение своего решения. Может быть полезна, когда важны скорость и решительность, но при чрезмерном использовании повышает риск сопротивления и ухудшения отношений.</p></details>
+      <details><summary>Сотрудничество</summary><p>Поиск решения, которое максимально учитывает интересы обеих сторон. Часто даёт более устойчивый результат, но требует времени, готовности к диалогу и навыков переговоров.</p></details>
+      <details><summary>Компромисс</summary><p>Поиск промежуточного варианта через взаимные уступки. Помогает быстрее договориться, но может оставить часть интересов обеих сторон неудовлетворённой.</p></details>
+      <details><summary>Уклонение</summary><p>Отказ от немедленного включения в конфликт или перенос обсуждения. Может снизить напряжение и дать время на подготовку, но не решает проблему само по себе.</p></details>
+      <details><summary>Приспособление</summary><p>Приоритет интересов другой стороны и готовность уступить. Помогает сохранить отношения и быстро завершить спор, но при частом использовании собственные интересы могут оставаться без внимания.</p></details>
+    </div>
+
+    <div class="result-note">
+      <b>Как читать результат.</b> Каждый балл — это один выбор в пользу стратегии, максимум — 12. Сумма пяти показателей всегда должна быть равна 30. Смотрите на профиль не как на оценку «хорошо/плохо» и не как на тип личности. Пять стратегий — это разные варианты выхода из разногласий, и каждая может быть уместна в определённых обстоятельствах. Результат показывает, какие варианты вы чаще выбирали в этом наборе пар.
+    </div>
+
+    <div class="reflection-block">
+      <div class="section-title">Для саморефлексии</div>
+      <p class="reflection-intro">Полезнее всего использовать профиль как повод посмотреть на собственный репертуар поведения: что включается привычно, что выбирается осознанно и какие варианты остаются в стороне.</p>
+      <div class="reflection-grid">
+        <div class="reflection-item"><span class="rnum">1</span><span>Какие стратегии я чаще выбираю автоматически, почти не задумываясь?</span></div>
+        <div class="reflection-item"><span class="rnum">2</span><span>В каких ситуациях привычный способ помогает мне выйти из разногласия, а в каких может ограничивать?</span></div>
+        <div class="reflection-item"><span class="rnum">3</span><span>Какие стратегии я использую реже? Это осознанный выбор или мне просто сложнее к ним прибегать?</span></div>
+        <div class="reflection-item"><span class="rnum">4</span><span>Что поможет мне выбирать способ действия более осознанно — с учётом важности вопроса, отношений, времени и возможных последствий?</span></div>
+      </div>
+      <p class="reflection-foot">Обратите внимание не только на самый высокий балл, но и на весь профиль: гибкость проявляется не в одной «лучшей» стратегии, а в способности выбирать подход под конкретную ситуацию.</p>
+    </div>
+
+    <div class="actions">
+      <button class="secondary" id="copyBtn" type="button">Скопировать результат</button>
+      <button class="secondary" id="savePngBtn" type="button">Сохранить картинку</button>
+      <button class="secondary" id="pdfBtn" type="button">Сохранить PDF</button>
+      <span class="copy-ok" id="copyOk">Готово</span>
+    </div>
+  </section>
+
+  <div class="footer">Опросник работает полностью на устройстве пользователя. После обновления страницы ответы не сохраняются.</div>
+</div>
+
+<script>
+const questions = [
+  ["В спорной ситуации я прежде всего отстаиваю собственные цели.","Прежде всего я стараюсь понять позиции и интересы всех сторон."],
+  ["Я открыто говорю о своих интересах и предлагаю другим сделать то же.","Когда возникает конфликт, я стараюсь настоять на своём решении."],
+  ["Если я считаю решение правильным, я настойчиво отстаиваю его, даже если другие возражают.","Я ищу совместное решение, учитывающее интересы всех сторон."],
+  ["Иногда я отказываюсь от своих предпочтений в пользу другой стороны.","Если возникает противоречие, я предпочитаю не поднимать его, пока можно обойтись без обсуждения."],
+  ["Я скорее принимаю позицию другого человека, чем настаиваю на своей.","Я стараюсь избегать обсуждений с теми, кто жёстко отстаивает свою позицию."],
+  ["Мне бывает проще поддержать решение другой стороны, чем настаивать на своём.","Я считаю, что некоторые разногласия не стоит обсуждать, и предпочитаю не вовлекаться в спор."],
+  ["Я пытаюсь найти компромиссное решение.","В спорной ситуации я прежде всего отстаиваю собственные цели."],
+  ["Когда возникает конфликт, я стараюсь настоять на своём решении.","Я обычно предлагаю «золотую середину»."],
+  ["Я стараюсь найти вариант, предполагающий взаимные уступки.","Если я считаю решение правильным, я настойчиво отстаиваю его, даже если другие возражают."],
+  ["Если возникает противоречие, я предпочитаю не поднимать его, пока можно обойтись без обсуждения.","Я пытаюсь найти компромиссное решение."],
+  ["Я обычно предлагаю «золотую середину».","Я стараюсь избегать обсуждений с теми, кто жёстко отстаивает свою позицию."],
+  ["Я считаю, что некоторые разногласия не стоит обсуждать, и предпочитаю не вовлекаться в спор.","Я стараюсь найти вариант, предполагающий взаимные уступки."],
+  ["В спорной ситуации я прежде всего отстаиваю собственные цели.","Иногда я отказываюсь от своих предпочтений в пользу другой стороны."],
+  ["Я скорее принимаю позицию другого человека, чем настаиваю на своей.","Когда возникает конфликт, я стараюсь настоять на своём решении."],
+  ["Если я считаю решение правильным, я настойчиво отстаиваю его, даже если другие возражают.","Мне бывает проще поддержать решение другой стороны, чем настаивать на своём."],
+  ["Я пытаюсь найти компромиссное решение.","Иногда я отказываюсь от своих предпочтений в пользу другой стороны."],
+  ["Я скорее принимаю позицию другого человека, чем настаиваю на своей.","Я обычно предлагаю «золотую середину»."],
+  ["Я стараюсь найти вариант, предполагающий взаимные уступки.","Мне бывает проще поддержать решение другой стороны, чем настаивать на своём."],
+  ["Если возникает противоречие, я предпочитаю не поднимать его, пока можно обойтись без обсуждения.","В спорной ситуации я прежде всего отстаиваю собственные цели."],
+  ["Когда возникает конфликт, я стараюсь настоять на своём решении.","Я стараюсь избегать обсуждений с теми, кто жёстко отстаивает свою позицию."],
+  ["Я считаю, что некоторые разногласия не стоит обсуждать, и предпочитаю не вовлекаться в спор.","Если я считаю решение правильным, я настойчиво отстаиваю его, даже если другие возражают."],
+  ["Прежде всего я стараюсь понять позиции и интересы всех сторон.","Если возникает противоречие, я предпочитаю не поднимать его, пока можно обойтись без обсуждения."],
+  ["Я стараюсь избегать обсуждений с теми, кто жёстко отстаивает свою позицию.","Я открыто говорю о своих интересах и предлагаю другим сделать то же."],
+  ["Я ищу совместное решение, учитывающее интересы всех сторон.","Я считаю, что некоторые разногласия не стоит обсуждать, и предпочитаю не вовлекаться в спор."],
+  ["Прежде всего я стараюсь понять позиции и интересы всех сторон.","Я пытаюсь найти компромиссное решение."],
+  ["Я открыто говорю о своих интересах и предлагаю другим сделать то же.","Я обычно предлагаю «золотую середину»."],
+  ["Я ищу совместное решение, учитывающее интересы всех сторон.","Я стараюсь найти вариант, предполагающий взаимные уступки."],
+  ["Иногда я отказываюсь от своих предпочтений в пользу другой стороны.","Прежде всего я стараюсь понять позиции и интересы всех сторон."],
+  ["Я открыто говорю о своих интересах и предлагаю другим сделать то же.","Я скорее принимаю позицию другого человека, чем настаиваю на своей."],
+  ["Мне бывает проще поддержать решение другой стороны, чем настаивать на своём.","Я ищу совместное решение, учитывающее интересы всех сторон."]
+];
+
+// Ключ из таблицы подсчёта в исходном материале.
+// A = Уклонение, B = Приспособление, C = Компромисс,
+// D = Конкуренция, E = Сотрудничество.
+const scoringKey = [
+  ['D','E'], ['E','D'], ['D','E'], ['B','A'], ['B','A'], ['B','A'],
+  ['C','D'], ['D','C'], ['C','D'], ['A','C'], ['C','A'], ['A','C'],
+  ['D','B'], ['B','D'], ['D','B'], ['C','B'], ['B','C'], ['C','B'],
+  ['A','D'], ['D','A'], ['A','D'], ['E','A'], ['A','E'], ['E','A'],
+  ['E','C'], ['E','C'], ['E','C'], ['B','E'], ['E','B'], ['B','E']
+];
+
+const strategies = {
+  D:{name:'Конкуренция', short:'Конкуренция'},
+  E:{name:'Сотрудничество', short:'Сотрудничество'},
+  C:{name:'Компромисс', short:'Компромисс'},
+  A:{name:'Уклонение', short:'Уклонение'},
+  B:{name:'Приспособление', short:'Приспособление'}
+};
+const displayOrder = ['D','E','C','A','B'];
+const responses = Array(30).fill(null); // 0 = первый вариант, 1 = второй
+let lastScores = null;
+
+function validateScoringKey(){
+  const counts={A:0,B:0,C:0,D:0,E:0};
+  if(scoringKey.length!==30) throw new Error('Ключ должен содержать 30 строк.');
+  scoringKey.forEach((row,i)=>{
+    if(!Array.isArray(row)||row.length!==2) throw new Error(`Ошибка ключа в вопросе ${i+1}.`);
+    if(row[0]===row[1]) throw new Error(`В вопросе ${i+1} обе опции попали в одну стратегию.`);
+    row.forEach(code=>{
+      if(!(code in counts)) throw new Error(`Неизвестный код стратегии ${code}.`);
+      counts[code]++;
+    });
+  });
+  Object.entries(counts).forEach(([code,count])=>{
+    if(count!==12) throw new Error(`Проверка ключа не пройдена: ${code} встречается ${count} раз вместо 12.`);
+  });
+  // Дополнительная контрольная проверка крайних тестовых профилей.
+  const allFirst={A:5,B:7,C:5,D:6,E:7};
+  const allSecond={A:7,B:5,C:7,D:6,E:5};
+  const countChoice=choice=>{
+    const s={A:0,B:0,C:0,D:0,E:0};
+    scoringKey.forEach(row=>s[row[choice]]++);
+    return s;
+  };
+  const same=(x,y)=>Object.keys(x).every(k=>x[k]===y[k]);
+  if(!same(countChoice(0),allFirst)||!same(countChoice(1),allSecond)) throw new Error('Контрольная сумма ключа не совпала.');
+  return true;
+}
+
+function showFatalError(err){
+  const box=document.getElementById('errorBox');
+  box.textContent='Внутренняя проверка ключа не пройдена. Опросник отключён, чтобы не показать неверный результат. '+err.message;
+  box.style.display='block';
+  document.getElementById('calcBtn').disabled=true;
+}
+
+function renderQuestions(){
+  const root=document.getElementById('questions');
+  questions.forEach((pair,i)=>{
+    const card=document.createElement('section');
+    card.className='panel question';
+    card.id='q'+(i+1);
+    card.innerHTML=`
+      <div class="qhead"><div class="qnum">${i+1}</div><div class="qtext">Выберите одно утверждение</div></div>
+      <div class="options" role="group" aria-label="Вопрос ${i+1}">
+        <button class="option" type="button" data-q="${i}" data-choice="0" aria-pressed="false"><span class="badge">1</span><span class="text">${pair[0]}</span></button>
+        <button class="option" type="button" data-q="${i}" data-choice="1" aria-pressed="false"><span class="badge">2</span><span class="text">${pair[1]}</span></button>
+      </div>`;
+    root.appendChild(card);
+  });
+  root.addEventListener('click',e=>{
+    const btn=e.target.closest('.option');
+    if(!btn) return;
+    const q=Number(btn.dataset.q), choice=Number(btn.dataset.choice);
+    responses[q]=choice;
+    document.querySelectorAll(`.option[data-q="${q}"]`).forEach(el=>{
+      const selected=Number(el.dataset.choice)===choice;
+      el.classList.toggle('selected',selected);
+      el.setAttribute('aria-pressed',selected?'true':'false');
+    });
+    document.getElementById('q'+(q+1)).classList.add('answered');
+    updateProgress();
+    if(document.getElementById('results').classList.contains('show') && responses.every(v=>v!==null)) calculate(false);
+  });
+}
+
+function updateProgress(){
+  const done=responses.filter(v=>v!==null).length;
+  document.getElementById('progressText').textContent=`${done} / 30`;
+  document.getElementById('progressBar').style.width=`${done/30*100}%`;
+  document.getElementById('calcBtn').disabled=done!==30;
+  document.getElementById('completeHint').textContent=done===30?'Готово — можно посмотреть профиль.':`Осталось ответить: ${30-done}`;
+}
+
+function computeScores(){
+  if(responses.some(v=>v===null)) throw new Error('Есть вопросы без ответа.');
+  const scores={A:0,B:0,C:0,D:0,E:0};
+  responses.forEach((choice,i)=>scores[scoringKey[i][choice]]++);
+  const total=Object.values(scores).reduce((a,b)=>a+b,0);
+  if(total!==30) throw new Error(`Сумма баллов равна ${total}, ожидалось 30.`);
+  Object.values(scores).forEach(v=>{if(v<0||v>12) throw new Error('Один из баллов вышел за допустимый диапазон 0–12.');});
+  return scores;
+}
+
+function topStrategyNames(scores){
+  const max=Math.max(...Object.values(scores));
+  return displayOrder.filter(code=>scores[code]===max).map(code=>strategies[code].name);
+}
+
+function renderResults(scores){
+  lastScores=scores;
+  const maxScore=Math.max(...Object.values(scores));
+  const top=topStrategyNames(scores);
+  const phrase=top.length===1
+    ? `В этом наборе пар чаще всего выбиралась стратегия «${top[0]}» — ${maxScore} из 12 возможных выборов.`
+    : `В этом наборе пар одинаково часто выбирались стратегии: ${top.join(', ')} — по ${maxScore} из 12 возможных выборов.`;
+  document.getElementById('resultSummary').textContent=phrase;
+
+  const cards=document.getElementById('scoreCards');
+  cards.innerHTML='';
+  displayOrder.forEach(code=>{
+    const el=document.createElement('div');
+    el.className='score-card'+(scores[code]===maxScore?' is-max':'');
+    el.innerHTML=`<div class="name">${strategies[code].name}</div><div class="value">${scores[code]} <span class="max">из 12</span></div>`;
+    cards.appendChild(el);
+  });
+
+  const bars=document.getElementById('bars');
+  bars.innerHTML='';
+  displayOrder.forEach(code=>{
+    const row=document.createElement('div');
+    row.className='bar-row';
+    row.innerHTML=`<div class="bar-name">${strategies[code].name}</div><div class="bar-track"><div class="bar-fill" style="width:${scores[code]/12*100}%"></div></div><div class="bar-score">${scores[code]}/12</div>`;
+    bars.appendChild(row);
+  });
+
+  document.querySelectorAll('.point').forEach(point=>{
+    const code=point.dataset.strategy;
+    const score=scores[code];
+    const bubble=point.querySelector('.bubble');
+    const size=34 + score*2.7;
+    bubble.style.width=size+'px';
+    bubble.style.height=size+'px';
+    bubble.style.opacity=String(0.45 + score/12*0.55);
+    bubble.textContent=score;
+  });
+}
+
+function calculate(scroll=true){
+  try{
+    const scores=computeScores();
+    renderResults(scores);
+    const results=document.getElementById('results');
+    results.classList.add('show');
+    if(scroll) setTimeout(()=>results.scrollIntoView({behavior:'smooth',block:'start'}),80);
+  }catch(err){
+    showFatalError(err);
+  }
+}
+
+document.getElementById('calcBtn').addEventListener('click',()=>calculate(true));
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  if(!confirm('Очистить все ответы?')) return;
+  responses.fill(null);lastScores=null;
+  document.querySelectorAll('.option').forEach(el=>{el.classList.remove('selected');el.setAttribute('aria-pressed','false');});
+  document.querySelectorAll('.question').forEach(el=>el.classList.remove('answered'));
+  document.getElementById('results').classList.remove('show');
+  updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+function resultText(){
+  const s=lastScores || computeScores();
+  const topNames=topStrategyNames(s);
+  const top=topNames.join(', ');
+  return `Стратегии поведения в конфликте — мой результат\nКонкуренция: ${s.D}/12\nСотрудничество: ${s.E}/12\nКомпромисс: ${s.C}/12\nУклонение: ${s.A}/12\nПриспособление: ${s.B}/12\nСумма: ${Object.values(s).reduce((a,b)=>a+b,0)}/30\nЧаще всего выбирались: ${top}\n\nДля саморефлексии: какие стратегии я выбираю автоматически, когда они помогают или ограничивают, какие использую реже и что поможет выбирать способ выхода из разногласия более осознанно?`;
+}
+function showActionOk(message='Готово'){
+  const ok=document.getElementById('copyOk');ok.textContent=message;ok.classList.add('show');setTimeout(()=>ok.classList.remove('show'),2200);
+}
+async function robustCopy(text){
+  if(navigator.clipboard && window.isSecureContext){try{await navigator.clipboard.writeText(text);return true;}catch(e){}}
+  const ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.left='-9999px';document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,ta.value.length);
+  let copied=false;try{copied=document.execCommand('copy');}catch(e){}document.body.removeChild(ta);return copied;
+}
+document.getElementById('copyBtn').addEventListener('click',async()=>{
+  const copied=await robustCopy(resultText());
+  if(copied) showActionOk('Скопировано');
+  else {const manual=prompt('Автоматическое копирование недоступно. Выделите текст и скопируйте вручную:',resultText());if(manual!==null) showActionOk('Текст показан');}
+});
+
+function escXml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function buildResultSVG(){
+  const s=lastScores || computeScores();
+  const W=1400,H=2250;
+  const barX=370,barW=780,barH=42,startY=360,rowGap=110;
+  const names={D:'Конкуренция',E:'Сотрудничество',C:'Компромисс',A:'Уклонение',B:'Приспособление'};
+  const topNames=topStrategyNames(s);
+  const top=topNames.join(', ');
+  const bars=displayOrder.map((code,i)=>{
+    const y=startY+i*rowGap;
+    const fill=barW*(s[code]/12);
+    return `<text x="90" y="${y+31}" font-family="Arial, sans-serif" font-size="29" font-weight="700" fill="#344054">${escXml(names[code])}</text>
+      <rect x="${barX}" y="${y}" width="${barW}" height="${barH}" rx="21" fill="#edf0f2"/>
+      <rect x="${barX}" y="${y}" width="${fill.toFixed(1)}" height="${barH}" rx="21" fill="#16813f"/>
+      <text x="1190" y="${y+31}" font-family="Arial, sans-serif" font-size="29" font-weight="700" fill="#344054">${s[code]}/12</text>`;
+  }).join('');
+
+  const mapX=335,mapY=1035,mapS=650;
+  const pts={D:[.21,.20],E:[.79,.20],C:[.50,.50],A:[.21,.80],B:[.79,.80]};
+  const mapLabels={D:'Конкуренция',E:'Сотрудничество',C:'Компромисс',A:'Уклонение',B:'Приспособление'};
+  const points=displayOrder.map(code=>{
+    const [px,py]=pts[code];const x=mapX+mapS*px,y=mapY+mapS*py;const r=24+s[code]*2.5;
+    return `<circle cx="${x}" cy="${y}" r="${r}" fill="#16a34a" stroke="#ffffff" stroke-width="5"/>
+      <text x="${x}" y="${y+10}" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#ffffff">${s[code]}</text>
+      <rect x="${x-95}" y="${y+r+8}" width="190" height="35" rx="8" fill="#ffffff" fill-opacity="0.92"/>
+      <text x="${x}" y="${y+r+34}" text-anchor="middle" font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#344054">${escXml(mapLabels[code])}</text>`;
+  }).join('');
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+  <svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+    <rect width="100%" height="100%" fill="#ffffff"/>
+    <text x="90" y="92" font-family="Arial, sans-serif" font-size="48" font-weight="700" fill="#111827">Стратегии поведения в конфликте</text>
+    <text x="90" y="145" font-family="Arial, sans-serif" font-size="26" font-weight="600" fill="#475467">Профиль по модели Томаса–Килмана</text>
+    <rect x="90" y="190" width="1220" height="110" rx="18" fill="#f3fbf5" stroke="#a7d8b7"/>
+    <text x="120" y="231" font-family="Arial, sans-serif" font-size="22" font-weight="600" fill="#166534">Чаще всего выбирались:</text>
+    <text x="120" y="271" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#166534">${escXml(top)}</text>
+    ${bars}
+    <text x="${mapX+mapS/2}" y="995" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#344054">Интересы другой стороны →</text>
+    <g transform="translate(145 ${mapY+mapS/2}) rotate(-90)"><text x="0" y="0" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#344054">Свои интересы →</text></g>
+    <rect x="${mapX}" y="${mapY}" width="${mapS}" height="${mapS}" fill="#ffffff" stroke="#667085" stroke-width="3"/>
+    <line x1="${mapX+mapS/2}" y1="${mapY}" x2="${mapX+mapS/2}" y2="${mapY+mapS}" stroke="#d0d5dd" stroke-width="2"/>
+    <line x1="${mapX}" y1="${mapY+mapS/2}" x2="${mapX+mapS}" y2="${mapY+mapS/2}" stroke="#d0d5dd" stroke-width="2"/>
+    ${points}
+    <text x="90" y="1815" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#172033">Для саморефлексии</text>
+    <text x="105" y="1870" font-family="Arial, sans-serif" font-size="23" fill="#344054">1. Какие стратегии я чаще выбираю автоматически?</text>
+    <text x="105" y="1925" font-family="Arial, sans-serif" font-size="23" fill="#344054">2. Когда привычный способ помогает мне выйти из разногласия, а когда ограничивает?</text>
+    <text x="105" y="1980" font-family="Arial, sans-serif" font-size="23" fill="#344054">3. Какие стратегии я использую реже — и почему?</text>
+    <text x="105" y="2035" font-family="Arial, sans-serif" font-size="23" fill="#344054">4. Что поможет мне выбирать способ действия более осознанно под конкретную ситуацию?</text>
+    <text x="90" y="2120" font-family="Arial, sans-serif" font-size="20" font-weight="600" fill="#166534">Пять стратегий — разные варианты выхода из разногласий. Здесь нет одной «лучшей» стратегии.</text>
+    <text x="90" y="2190" font-family="Arial, sans-serif" font-size="18" fill="#667085">Баллы — количество выборов стратегии в 30 парах. Максимум по каждой стратегии — 12; сумма пяти показателей — 30.</text>
+  </svg>`;
+}
+
+function svgToCanvas(callback){
+  const svg=buildResultSVG();
+  const blob=new Blob([svg],{type:'image/svg+xml;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const img=new Image();
+  img.onload=()=>{
+    const canvas=document.createElement('canvas');canvas.width=1400;canvas.height=2250;
+    const ctx=canvas.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);URL.revokeObjectURL(url);callback(null,canvas);
+  };
+  img.onerror=()=>{URL.revokeObjectURL(url);callback(new Error('Не удалось сформировать изображение.'));};
+  img.src=url;
+}
+function saveBlob(blob,filename){
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(url),1800);
+}
+document.getElementById('savePngBtn').addEventListener('click',()=>{
+  svgToCanvas((err,canvas)=>{
+    if(err){showActionOk('Не удалось сохранить');return;}
+    canvas.toBlob(blob=>{if(!blob){showActionOk('Не удалось сохранить');return;}saveBlob(blob,'thomas_kilmann_result.png');showActionOk('Картинка сохранена');},'image/png');
+  });
+});
+function dataUrlToBytes(dataUrl){const base64=dataUrl.split(',')[1],bin=atob(base64),bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);return bytes;}
+function concatBytes(parts){let total=0;parts.forEach(p=>total+=p.length);const out=new Uint8Array(total);let offset=0;parts.forEach(p=>{out.set(p,offset);offset+=p.length;});return out;}
+function asciiBytes(s){return new TextEncoder().encode(s);}
+function buildSingleImagePdf(jpegBytes,imgW,imgH){
+  const pageW=595,pageH=842,margin=18,maxW=pageW-margin*2,maxH=pageH-margin*2,scale=Math.min(maxW/imgW,maxH/imgH),drawW=imgW*scale,drawH=imgH*scale,x=(pageW-drawW)/2,y=(pageH-drawH)/2;
+  const objects=[];objects[1]=asciiBytes('<< /Type /Catalog /Pages 2 0 R >>');objects[2]=asciiBytes('<< /Type /Pages /Kids [3 0 R] /Count 1 >>');objects[3]=asciiBytes(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageW} ${pageH}] /Resources << /XObject << /Im0 5 0 R >> >> /Contents 4 0 R >>`);
+  const content=`q\n${drawW.toFixed(3)} 0 0 ${drawH.toFixed(3)} ${x.toFixed(3)} ${y.toFixed(3)} cm\n/Im0 Do\nQ\n`;const contentBytes=asciiBytes(content);
+  objects[4]=concatBytes([asciiBytes(`<< /Length ${contentBytes.length} >>\nstream\n`),contentBytes,asciiBytes('endstream')]);
+  objects[5]=concatBytes([asciiBytes(`<< /Type /XObject /Subtype /Image /Width ${imgW} /Height ${imgH} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpegBytes.length} >>\nstream\n`),jpegBytes,asciiBytes('\nendstream')]);
+  const header=asciiBytes('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n'),parts=[header],offsets=[0];let current=header.length;
+  for(let i=1;i<=5;i++){offsets[i]=current;const prefix=asciiBytes(`${i} 0 obj\n`),suffix=asciiBytes('\nendobj\n');parts.push(prefix,objects[i],suffix);current+=prefix.length+objects[i].length+suffix.length;}
+  const xrefPos=current;let xref='xref\n0 6\n0000000000 65535 f \n';for(let i=1;i<=5;i++)xref+=String(offsets[i]).padStart(10,'0')+' 00000 n \n';xref+=`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xrefPos}\n%%EOF`;parts.push(asciiBytes(xref));return concatBytes(parts);
+}
+document.getElementById('pdfBtn').addEventListener('click',()=>{
+  svgToCanvas((err,canvas)=>{
+    if(err){showActionOk('Не удалось создать PDF');return;}
+    const jpegData=canvas.toDataURL('image/jpeg',0.95),jpegBytes=dataUrlToBytes(jpegData),pdfBytes=buildSingleImagePdf(jpegBytes,canvas.width,canvas.height),pdfBlob=new Blob([pdfBytes],{type:'application/pdf'});
+    saveBlob(pdfBlob,'thomas_kilmann_result.pdf');showActionOk('PDF сохранён');
+  });
+});
+
+try{validateScoringKey();renderQuestions();updateProgress();}catch(err){showFatalError(err);}
+</script>
+</body>
+</html>
