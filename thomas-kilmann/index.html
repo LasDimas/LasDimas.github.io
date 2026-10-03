@@ -110,11 +110,11 @@
     .bar-track{height:16px;background:#edf0f2;border-radius:999px;overflow:hidden}
     .bar-fill{height:100%;width:0;background:linear-gradient(90deg,#2ca85a,#16813f);border-radius:999px;transition:width .45s ease}
     .bar-score{text-align:right;font-size:14px;font-weight:900;color:#344054}
-    .strategy-map-wrap{max-width:650px;margin:18px auto 6px}
+    .strategy-map-wrap{width:100%;max-width:650px;margin:18px auto 6px}
     .map-x-title{text-align:center;font-weight:800;font-size:14px;margin:0 0 7px;color:#344054}
-    .map-row{display:grid;grid-template-columns:38px 1fr;gap:8px;align-items:stretch}
+    .map-row{display:grid;grid-template-columns:38px minmax(0,1fr);gap:8px;align-items:stretch;width:100%}
     .map-y-title{writing-mode:vertical-rl;transform:rotate(180deg);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#344054;text-align:center}
-    .strategy-map{position:relative;aspect-ratio:1/1;border-left:2px solid #667085;border-bottom:2px solid #667085;background:#fff;overflow:hidden;border-radius:3px}
+    .strategy-map{position:relative;width:100%;min-width:0;aspect-ratio:1/1;border-left:2px solid #667085;border-bottom:2px solid #667085;background:#fff;overflow:hidden;border-radius:3px}
     .strategy-map:before,.strategy-map:after{content:"";position:absolute;background:#d0d5dd;z-index:0}
     .strategy-map:before{left:50%;top:0;bottom:0;width:1px}
     .strategy-map:after{top:50%;left:0;right:0;height:1px}
@@ -154,7 +154,7 @@
       .sticky{top:6px;margin:10px 0;padding:10px 12px}
       .score-cards{grid-template-columns:1fr 1fr}.score-card .value{font-size:25px}
       .bar-row{grid-template-columns:112px 1fr 48px;gap:7px}.bar-name{font-size:12px}.bar-score{font-size:12px}
-      .map-row{grid-template-columns:30px 1fr}.map-y-title{font-size:11px}.point{min-width:64px}.point-label{white-space:normal;max-width:98px}
+      .map-row{grid-template-columns:28px minmax(0,1fr);gap:6px}.map-y-title{font-size:11px}.map-x-title{font-size:13px}.point{min-width:64px}.point-label{white-space:normal;max-width:98px;font-size:11px}
       button.primary,button.secondary{flex:1 1 auto}
     }
     @media (max-width:390px){
