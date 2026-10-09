@@ -65,6 +65,20 @@ p{margin:9px 0}.muted{color:var(--gray)}.small{font-size:13px}.hide{display:none
 @media(max-width:680px){.wrap{padding:12px 11px 45px}.hero{padding:23px 20px;border-radius:17px}.card{padding:18px;margin-top:12px}.stat{padding:12px 10px}.stat strong{font-size:22px}.choice-grid{grid-template-columns:1fr;gap:11px;margin-top:17px}.choice{min-height:112px;padding:15px;gap:8px}.choice-name{font-size:18px}.rank-row{grid-template-columns:26px minmax(0,1fr) 56px;padding:11px 10px;gap:8px}.rank-name{font-size:13px}.rank-score{font-size:20px}.rank-score span{font-size:10px}.actions .btn{flex:1 1 40%}.jump{width:100%;justify-content:flex-start}.shortcut{display:none}}
 @media(max-width:390px){.stats{gap:5px}.stat{padding:9px 7px}.stat span{font-size:11px}.btn{padding:11px 12px}.rank-row{grid-template-columns:24px minmax(0,1fr) 52px;gap:6px}}
 @media print{@page{size:A4;margin:13mm}html,body{background:#fff!important;color:#111}.wrap{max-width:none;padding:0}.hero,#intro,#sticky,#survey,#finished,.no-print,.footer{display:none!important}#results{display:block!important;margin:0;padding:0;border:0;box-shadow:none}#printTitle{display:block;font-size:22px;margin:0 0 14px}.result-heading{margin-bottom:9px;padding-bottom:8px}.result-heading .kicker{display:none}.result-heading h2{font-size:19px}.result-heading p{font-size:11px}.summary{padding:10px 12px;margin:0 0 12px}.summary p{font-size:11px}.rank-list{gap:5px}.rank-row{border:1px solid #dce3dc;padding:8px 10px;grid-template-columns:27px 1fr 55px}.rank-name{font-size:12px}.rank-score{font-size:17px}.rank-track{height:5px;margin-top:4px}.results-topline{margin:10px 0 7px}.method{font-size:11px;margin-top:12px;padding:9px}.reflection{margin-top:12px;padding-top:9px;font-size:11px}.reflection li{margin:3px 0}.rank-row,.method,.reflection{break-inside:avoid}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+
+.scenario{padding:17px 19px;border-left:4px solid #16a34a;border-radius:10px;background:#f4faf6;margin:19px 0 15px}
+.scenario strong{color:#145c39;font-size:16px}.scenario p{margin:9px 0 0;font-size:14px}
+.comparisons{display:grid;gap:8px;margin-top:12px}
+.block-legend{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0 0;padding-left:47px;color:#667085;font-size:12px;font-weight:800;text-align:center}
+.comparison{display:grid;grid-template-columns:29px minmax(0,1fr) 24px minmax(0,1fr);align-items:stretch;gap:9px;padding:7px;border-radius:12px;background:#fbfcfd;border:1px solid #e5e9e7}
+.compare-number{display:flex;justify-content:center;align-items:center;font-size:13px;color:#667085;font-weight:800}
+.versus{display:flex;align-items:center;justify-content:center;font-size:12px;color:#667085}
+.pair-opt{width:100%;min-width:0;min-height:55px;padding:11px;border-radius:10px;background:#fff;border:1px solid #dce4e0;text-align:center;overflow-wrap:anywhere;color:#263238;font-size:14px;line-height:1.28;font-weight:700}
+.pair-opt:hover{border-color:#83c79c;background:#f5fbf6}
+.pair-opt.selected{border-color:#16a34a;background:#dcfce7;color:#135b30;box-shadow:inset 0 0 0 1px #16a34a}
+.pair-opt.selected:before{content:'✓ ';font-weight:900;color:#166534}
+@media(max-width:680px){.comparison{grid-template-columns:21px minmax(0,1fr) 17px minmax(0,1fr);gap:4px;padding:5px}.pair-opt{font-size:12px;padding:9px 5px;min-height:58px}.block-legend{padding-left:23px;gap:8px;font-size:11px}.scenario{padding:14px}.scenario p{font-size:13px}}
+@media print{.scenario,.comparisons,.block-legend{display:none!important}}
 </style>
 </head>
 <body>
@@ -76,42 +90,25 @@ p{margin:9px 0}.muted{color:var(--gray)}.small{font-size:13px}.hide{display:none
 </header>
 <section class="card" id="intro">
 <h2>Как проходить опросник</h2>
-<p>В каждой паре выберите <b>один из двух факторов</b>, который для вас важнее в работе <b>сейчас</b>. Если важны оба, представьте, что приходится выбрать только один.</p>
-<p>Правильных и неправильных ответов нет. Не думайте о том, какие факторы «должны» быть важны: выбирайте в соответствии с вашими реальными приоритетами.</p>
-<div class="stats">
-<div class="stat"><strong>14</strong><span>мотиваторов</span></div>
-<div class="stat"><strong>91</strong><span>сравнение</span></div>
-<div class="stat"><strong>0–13</strong><span>баллов за фактор</span></div>
-</div>
-<div class="note">Все пары показываются по одному разу. Порядок сбалансирован, чтобы один и тот же мотиватор не появлялся много раз подряд. Можно вернуться к предыдущему ответу, а прогресс сохраняется на этом устройстве.</div>
-<div class="actions">
-<button class="btn primary" id="startBtn" type="button">Начать опросник →</button>
-<button class="btn danger hide" id="clearIntroBtn" type="button">Удалить сохранённые ответы</button>
-</div>
+<p>В каждом сравнении выберите, <b>небольшое преимущество какого фактора важнее для вас в работе сейчас</b>.</p>
+<div class="scenario"><strong>Представьте два предложения о работе</strong>
+<p>Оба варианта в целом сопоставимы, но в одном <b>чуть выше оплата и бонусы</b>, а в другом работа приносит <b>чуть больше морального удовлетворения</b>. Какой вариант вы бы предпочли?</p>
+<p><b>Не сравнивайте крайности.</b> Речь не о работе с высокой зарплатой, но совсем без удовлетворения, и не об интересной работе вообще без оплаты. Сравнивайте небольшую разницу между двумя факторами при прочих примерно равных условиях.</p></div>
+<p>Правильных и неправильных ответов нет. Ориентируйтесь на свои реальные приоритеты, а не на то, как «должно быть».</p>
+<div class="stats"><div class="stat"><strong>14</strong><span>мотиваторов</span></div><div class="stat"><strong>13</strong><span>блоков</span></div><div class="stat"><strong>91</strong><span>сравнение</span></div></div>
+<div class="note">В каждом блоке один мотиватор последовательно сравнивается с остальными, ещё не сопоставленными с ним. Можно менять ответы и возвращаться к предыдущим блокам. Прогресс сохраняется на устройстве.</div>
+<div class="actions"><button class="btn primary" id="startBtn" type="button">Начать опросник →</button><button class="btn danger hide" id="clearIntroBtn" type="button">Удалить сохранённые ответы</button></div>
 <p class="small muted hide" id="resumeHint"></p>
 </section>
-<div class="sticky hide" id="sticky">
-<div class="sticky-row"><span id="progressText">Сравнение 1 из 91</span><span id="progressCount">0 / 91</span></div>
-<div class="progress-track" role="progressbar" aria-label="Заполнено сравнений" aria-valuemin="0" aria-valuemax="91" aria-valuenow="0" id="progressTrack"><div class="progress-fill" id="progressFill"></div></div>
-</div>
+<div class="sticky hide" id="sticky"><div class="sticky-row"><span id="progressText">Блок 1 из 13</span><span id="progressCount">0 / 91</span></div><div class="progress-track" role="progressbar" aria-label="Заполнено сравнений" aria-valuemin="0" aria-valuemax="91" aria-valuenow="0" id="progressTrack"><div class="progress-fill" id="progressFill"></div></div></div>
 <section class="card hide" id="survey">
-<span class="kicker" id="pairLabel">Сравнение 1 из 91</span>
-<h2 class="question-heading">Что для вас важнее в работе?</h2>
-<p class="muted small">Выберите один из двух вариантов.</p>
-<div class="choice-grid">
-<button type="button" class="choice" id="choice0"><span class="choice-letter">1</span><span><span class="choice-name" id="choiceName0"></span><span class="choice-category" id="choiceCategory0"></span></span></button>
-<button type="button" class="choice" id="choice1"><span class="choice-letter">2</span><span><span class="choice-name" id="choiceName1"></span><span class="choice-category" id="choiceCategory1"></span></span></button>
-</div>
-<div class="actions">
-<button class="btn secondary" id="prevBtn" type="button">← Назад</button>
-<button class="btn ghost" id="nextBtn" type="button">Следующее →</button>
-<button class="btn primary hide" id="backToResultsBtn" type="button">Вернуться к результату</button>
-</div>
-<div class="row-between" style="margin-top:17px">
-<label class="jump" for="jumpSelect">Перейти к сравнению <select id="jumpSelect" aria-label="Номер сравнения"></select></label>
-<span class="small muted" id="answeredState"></span>
-</div>
-<p class="shortcut">Можно выбирать клавишами 1 и 2 на клавиатуре.</p>
+<div class="row-between"><span class="kicker" id="pairLabel">Блок 1 из 13</span><span class="small muted" id="answeredState"></span></div>
+<h2 class="question-heading" id="blockFactorTitle"></h2>
+<p class="muted small">Что для вас важнее: <b>небольшое преимущество этого мотиватора</b> или другого в каждой строке? Нажмите на предпочтительный вариант.</p>
+<div class="block-legend"><span>Основной мотиватор</span><span>Другой мотиватор</span></div>
+<div id="comparisons" class="comparisons"></div>
+<div class="actions"><button class="btn secondary" id="prevBtn" type="button">← Предыдущий блок</button><button class="btn primary" id="nextBtn" type="button">Следующий блок →</button><button class="btn ghost hide" id="backToResultsBtn" type="button">Вернуться к результату</button></div>
+<div class="row-between" style="margin-top:17px"><label class="jump" for="jumpSelect">Перейти к блоку <select id="jumpSelect" aria-label="Номер блока"></select></label><span class="small muted" id="blockHint"></span></div>
 </section>
 <section class="card hide" id="finished">
 <div class="finish-mark">✓</div>
@@ -151,8 +148,7 @@ p{margin:9px 0}.muted{color:var(--gray)}.small{font-size:13px}.hide{display:none
 <noscript><p style="padding:20px;color:#a52a2a">Для работы опросника необходимо включить JavaScript.</p></noscript>
 <script>
 'use strict';
-/* Исходные 14 мотиваторов из исходного рабочего опросника.
-   Каждая неупорядоченная пара предъявляется ровно один раз; 91 решение. */
+/* Исходные мотиваторы; 13 блоков и все 91 уникальное попарное сравнение. */
 const FACTORS = [
   {code:'ОиБ',name:'Оплата и бонусы',group:'Деньги'},
   {code:'МУ',name:'Моральное удовлетворение',group:'«Я»'},
@@ -170,17 +166,15 @@ const FACTORS = [
   {code:'ТС',name:'Творческое самовыражение',group:'«Я»'}
 ];
 const KEY='b1_motivation_profile_v1';
-function pairsSchedule(){
-  const n=FACTORS.length;
-  let ring=Array.from({length:n},(_,i)=>i);
-  const pairs=[];
-  let seed=83029;
+/* Прежний порядок нужен для переноса сохранённых ответов. */
+function legacyPairsSchedule(){
+  const n=FACTORS.length, pairs=[];
+  let ring=Array.from({length:n},(_,i)=>i),seed=83029;
   function rnd(){seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296}
   for(let round=0;round<n-1;round++){
     const group=[];
     for(let i=0;i<n/2;i++){
-      const a=ring[i],b=ring[n-1-i];
-      const low=Math.min(a,b),high=Math.max(a,b),d=high-low;
+      const a=ring[i],b=ring[n-1-i],low=Math.min(a,b),high=Math.max(a,b),d=high-low;
       const left=d<7?low:d>7?high:(low%2===0?low:high);
       group.push([left,left===a?b:a]);
     }
@@ -190,24 +184,39 @@ function pairsSchedule(){
   }
   return pairs;
 }
-const PAIRS=pairsSchedule(),TOTAL=PAIRS.length;
+const LEGACY_PAIRS=legacyPairsSchedule(),BLOCKS=[],PAIRS=[];
+for(let i=0;i<FACTORS.length-1;i++){
+  const start=PAIRS.length;
+  for(let j=i+1;j<FACTORS.length;j++)PAIRS.push([i,j]);
+  BLOCKS.push({factor:i,start,length:PAIRS.length-start});
+}
+const TOTAL=PAIRS.length;
 function checkSchedule(){
-  if(TOTAL!==91)throw Error('Неверное число сравнений');
-  const seen=new Set(),sides=Array(14).fill(0),degree=Array(14).fill(0);
-  PAIRS.forEach(([a,b])=>{if(a===b)throw Error('Одинаковые мотиваторы');let k=[a,b].sort((x,y)=>x-y).join('-');if(seen.has(k))throw Error('Повтор пары');seen.add(k);degree[a]++;degree[b]++;sides[a]++});
-  if(degree.some(v=>v!==13)||sides.some(v=>v<6||v>7))throw Error('Несбалансированные сравнения');
+  if(TOTAL!==91||BLOCKS.length!==13)throw Error('Неверное число сравнений');
+  const seen=new Set(),degree=Array(14).fill(0);
+  PAIRS.forEach(([a,b])=>{const k=[a,b].sort((x,y)=>x-y).join('-');if(a===b||seen.has(k))throw Error('Повтор пары');seen.add(k);degree[a]++;degree[b]++});
+  if(degree.some(x=>x!==13)||BLOCKS.some((b,i)=>b.length!==13-i))throw Error('Неверная группировка');
 }
 checkSchedule();
 const byId=id=>document.getElementById(id);
 let answers=Array(TOTAL).fill(null),step=0,view='intro';
 function countAnswered(){return answers.filter(a=>a===0||a===1).length}
 function complete(){return countAnswered()===TOTAL}
-function persist(){try{localStorage.setItem(KEY,JSON.stringify({version:1,answers,step}))}catch(e){}}
+function firstIncompleteBlock(){const i=BLOCKS.findIndex(b=>answers.slice(b.start,b.start+b.length).some(x=>x===null));return i<0?BLOCKS.length:i}
+function blockCount(b){return answers.slice(b.start,b.start+b.length).filter(x=>x!==null).length}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify({version:2,answers,step}))}catch(e){}}
 function restore(){
   try{
     const raw=JSON.parse(localStorage.getItem(KEY)||'null');
-    if(raw&&raw.version===1&&Array.isArray(raw.answers)&&raw.answers.length===TOTAL&&raw.answers.every(a=>a===0||a===1||a===null)){
-      answers=raw.answers.slice();step=Number.isInteger(raw.step)?Math.min(TOTAL,Math.max(0,raw.step)):0;
+    if(!raw||!Array.isArray(raw.answers)||raw.answers.length!==TOTAL||!raw.answers.every(x=>x===0||x===1||x===null))return;
+    if(raw.version===2){
+      answers=raw.answers.slice();
+      step=Number.isInteger(raw.step)?Math.min(BLOCKS.length,Math.max(0,raw.step)):0;
+    }else if(raw.version===1){
+      const winners=new Map();
+      LEGACY_PAIRS.forEach(([a,b],i)=>{if(raw.answers[i]!==null)winners.set([a,b].sort((x,y)=>x-y).join('-'),[a,b][raw.answers[i]])});
+      answers=PAIRS.map(pair=>{const winner=winners.get(pair.join('-'));return winner===undefined?null:pair.indexOf(winner)});
+      step=firstIncompleteBlock();persist();
     }
   }catch(e){}
 }
@@ -217,50 +226,68 @@ function setView(target){
   byId('sticky').classList.toggle('hide',target!=='survey'&&target!=='done');
 }
 function progress(){
-  const k=countAnswered();
-  byId('progressCount').textContent=k+' / '+TOTAL;
-  byId('progressText').textContent=step===TOTAL?'Все сравнения завершены':'Сравнение '+(step+1)+' из '+TOTAL;
-  byId('progressFill').style.width=(100*k/TOTAL)+'%';
-  byId('progressTrack').setAttribute('aria-valuenow',String(k));
+  const n=countAnswered();
+  byId('progressCount').textContent=n+' / '+TOTAL;
+  byId('progressText').textContent=step===BLOCKS.length?'Все сравнения завершены':'Блок '+(step+1)+' из '+BLOCKS.length;
+  byId('progressFill').style.width=(100*n/TOTAL)+'%';
+  byId('progressTrack').setAttribute('aria-valuenow',String(n));
 }
 function renderIntro(){
-  setView('intro');
-  const n=countAnswered();
+  setView('intro');const n=countAnswered();
   byId('startBtn').textContent=n?(complete()?'Посмотреть результат →':'Продолжить ('+n+' из '+TOTAL+') →'):'Начать опросник →';
   byId('clearIntroBtn').classList.toggle('hide',n===0);
   byId('resumeHint').classList.toggle('hide',n===0);
   byId('resumeHint').textContent=n?'Сохранено ответов: '+n+' из '+TOTAL+'. Можно продолжить на этом устройстве.':'';
 }
 function scrollTop(){window.scrollTo({top:0,behavior:'instant'})}
+function updateChoice(row,index){
+  row.querySelectorAll('.pair-opt').forEach((btn,i)=>{
+    const selected=answers[index]===i;
+    btn.classList.toggle('selected',selected);
+    btn.setAttribute('aria-pressed',selected?'true':'false');
+  });
+}
+function updateBlockStatus(){
+  const b=BLOCKS[step],done=blockCount(b);
+  byId('answeredState').textContent=done+' из '+b.length+' сравнений';
+  byId('nextBtn').disabled=done!==b.length;
+  byId('nextBtn').textContent=step===BLOCKS.length-1?'Завершить и показать результат →':'Следующий блок →';
+  byId('blockHint').textContent=done===b.length?'Блок заполнен':'Осталось ответить: '+(b.length-done);
+  progress();
+}
 function renderSurvey(){
-  if(step>=TOTAL){renderDone();return}
-  setView('survey');progress();
-  const pair=PAIRS[step];
-  byId('pairLabel').textContent='Сравнение '+(step+1)+' из '+TOTAL;
-  for(let i=0;i<2;i++){
-    const f=FACTORS[pair[i]];
-    byId('choiceName'+i).textContent=f.name;
-    byId('choiceCategory'+i).textContent=f.group;
-    byId('choice'+i).classList.toggle('selected',answers[step]===i);
-    byId('choice'+i).setAttribute('aria-pressed',answers[step]===i?'true':'false');
+  if(step>=BLOCKS.length){renderDone();return}
+  setView('survey');
+  const b=BLOCKS[step];
+  byId('pairLabel').textContent='Блок '+(step+1)+' из '+BLOCKS.length;
+  byId('blockFactorTitle').textContent=FACTORS[b.factor].name;
+  const root=byId('comparisons');root.replaceChildren();
+  for(let index=b.start;index<b.start+b.length;index++){
+    const pair=PAIRS[index],row=document.createElement('div');
+    row.className='comparison';
+    const num=document.createElement('span');num.className='compare-number';num.textContent=String(index-b.start+1);row.append(num);
+    pair.forEach((factorIndex,choiceIndex)=>{
+      if(choiceIndex===1){const or=document.createElement('span');or.className='versus';or.textContent='или';row.append(or)}
+      const button=document.createElement('button');
+      button.type='button';button.className='pair-opt';button.textContent=FACTORS[factorIndex].name;
+      button.setAttribute('aria-label','Сравнение '+(index-b.start+1)+': выбрать '+FACTORS[factorIndex].name);
+      button.addEventListener('click',()=>choose(index,choiceIndex,row));row.append(button);
+    });
+    updateChoice(row,index);root.append(row);
   }
   byId('prevBtn').disabled=step===0;
-  byId('nextBtn').disabled=answers[step]===null;
-  byId('nextBtn').textContent=step===TOTAL-1?'Завершить →':'Следующее →';
-  byId('backToResultsBtn').classList.toggle('hide',!complete());
   byId('jumpSelect').value=String(step);
-  byId('answeredState').textContent=answers[step]===null?'Выбор ещё не сделан':'Выбран вариант '+(answers[step]+1);
+  byId('backToResultsBtn').classList.toggle('hide',!complete());
+  updateBlockStatus();
 }
 function renderDone(){
-  if(!complete()){step=answers.findIndex(a=>a===null);renderSurvey();return}
-  step=TOTAL;persist();setView('done');progress();scrollTop();
+  if(!complete()){step=firstIncompleteBlock();renderSurvey();return}
+  step=BLOCKS.length;persist();setView('done');progress();scrollTop();
 }
-function choose(i){
-  if(view!=='survey'||step>=TOTAL)return;
-  answers[step]=i;
-  if(step===TOTAL-1)step=TOTAL;else step++;
-  persist();
-  if(step===TOTAL)renderDone();else renderSurvey();
+function choose(index,choice,row){
+  if(view!=='survey'||!PAIRS[index]||!BLOCKS[step])return;
+  const b=BLOCKS[step];if(index<b.start||index>=b.start+b.length)return;
+  answers[index]=choice;persist();updateChoice(row,index);updateBlockStatus();
 }
 function calculate(){
   if(!complete())throw Error('Не все сравнения заполнены');
@@ -347,27 +374,27 @@ function savePng(){
 }
 restore();
 const select=byId('jumpSelect');
-for(let i=0;i<TOTAL;i++){const option=document.createElement('option');option.value=String(i);option.textContent='№ '+(i+1);select.append(option)}
-byId('startBtn').addEventListener('click',()=>{if(complete())renderResults();else{if(answers[step]!==null||step===TOTAL){step=answers.findIndex(a=>a===null)}renderSurvey();scrollTop()}});
+BLOCKS.forEach((b,i)=>{
+  const option=document.createElement('option');option.value=String(i);
+  option.textContent=(i+1)+'. '+FACTORS[b.factor].name;select.append(option);
+});
+byId('startBtn').addEventListener('click',()=>{if(complete())renderResults();else{step=firstIncompleteBlock();persist();renderSurvey();scrollTop()}});
 byId('clearIntroBtn').addEventListener('click',reset);
-byId('choice0').addEventListener('click',()=>choose(0));
-byId('choice1').addEventListener('click',()=>choose(1));
-byId('prevBtn').addEventListener('click',()=>{if(step>0){step--;persist();renderSurvey()}});
-byId('nextBtn').addEventListener('click',()=>{if(answers[step]!==null){step++;persist();if(step===TOTAL)renderDone();else renderSurvey()}});
-byId('jumpSelect').addEventListener('change',e=>{step=Number(e.target.value);persist();renderSurvey()});
+byId('prevBtn').addEventListener('click',()=>{if(step>0){step--;persist();renderSurvey();scrollTop()}});
+byId('nextBtn').addEventListener('click',()=>{
+  const b=BLOCKS[step];if(b&&blockCount(b)===b.length){
+    step++;persist();if(step===BLOCKS.length)renderDone();else{renderSurvey();scrollTop()}
+  }
+});
+byId('jumpSelect').addEventListener('change',e=>{step=Number(e.target.value);persist();renderSurvey();scrollTop()});
 byId('backToResultsBtn').addEventListener('click',renderResults);
 byId('showResultsBtn').addEventListener('click',renderResults);
-byId('lastBtn').addEventListener('click',()=>{step=TOTAL-1;persist();renderSurvey()});
+byId('lastBtn').addEventListener('click',()=>{step=BLOCKS.length-1;persist();renderSurvey();scrollTop()});
 byId('restartBtn').addEventListener('click',reset);
 byId('editBtn').addEventListener('click',()=>{step=0;persist();renderSurvey();scrollTop()});
 byId('copyBtn').addEventListener('click',copyResults);
 byId('pngBtn').addEventListener('click',savePng);
 byId('pdfBtn').addEventListener('click',()=>window.print());
-document.addEventListener('keydown',e=>{
-  if(view!=='survey'||e.ctrlKey||e.metaKey||e.altKey||e.repeat)return;
-  if(['SELECT','INPUT','TEXTAREA'].includes(document.activeElement.tagName))return;
-  if(e.key==='1'||e.key==='2'){e.preventDefault();choose(Number(e.key)-1)}
-});
 renderIntro();
 </script>
 </body>
