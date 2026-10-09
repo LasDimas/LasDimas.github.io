@@ -109,15 +109,6 @@ p{margin:9px 0}.muted{color:var(--gray)}.small{font-size:13px}.hide{display:none
 <div class="actions"><button class="btn secondary" id="prevBtn" type="button">← Предыдущий блок</button><button class="btn primary" id="nextBtn" type="button">Следующий блок →</button><button class="btn ghost hide" id="backToResultsBtn" type="button">Вернуться к результату</button></div>
 <div class="row-between" style="margin-top:17px"><label class="jump" for="jumpSelect">Перейти к блоку <select id="jumpSelect" aria-label="Номер блока"></select></label><span class="small muted" id="blockHint"></span></div>
 </section>
-<section class="card hide" id="finished">
-<div class="finish-mark">✓</div>
-<h2>Все 91 сравнение завершены</h2>
-<p>Результат готов. Опросник автоматически подсчитает, сколько раз вы выбрали каждый мотиватор, и выстроит их по убыванию баллов.</p>
-<div class="actions">
-<button class="btn primary" id="showResultsBtn" type="button">Посмотреть мой профиль →</button>
-<button class="btn ghost" id="lastBtn" type="button">← Вернуться к сравнениям</button>
-</div>
-</section>
 <section class="card hide" id="results" aria-live="polite">
 <h1 id="printTitle">Мотивационный профиль</h1>
 <div class="result-heading"><span class="kicker">Ваш результат</span><h2>Мой мотивационный профиль</h2><p>Рейтинг факторов по тому, как часто вы выбирали каждый из них при сравнении с остальными.</p></div>
@@ -221,8 +212,8 @@ function restore(){
 }
 function setView(target){
   view=target;
-  for(const id of ['intro','survey','finished','results'])byId(id).classList.toggle('hide',id!==(target==='done'?'finished':target));
-  byId('sticky').classList.toggle('hide',target!=='survey'&&target!=='done');
+  for(const id of ['intro','survey','results'])byId(id).classList.toggle('hide',id!==target);
+  byId('sticky').classList.toggle('hide',target!=='survey');
 }
 function progress(){
   const n=countAnswered();
@@ -250,12 +241,12 @@ function updateBlockStatus(){
   const b=BLOCKS[step],done=blockCount(b);
   byId('answeredState').textContent=done+' из '+b.length+' сравнений';
   byId('nextBtn').disabled=done!==b.length;
-  byId('nextBtn').textContent=step===BLOCKS.length-1?'Завершить и показать результат →':'Следующий блок →';
+  byId('nextBtn').textContent=step===BLOCKS.length-1?'Показать результат →':'Следующий блок →';
   byId('blockHint').textContent=done===b.length?'Блок заполнен':'Осталось ответить: '+(b.length-done);
   progress();
 }
 function renderSurvey(){
-  if(step>=BLOCKS.length){renderDone();return}
+  if(step>=BLOCKS.length){renderResults();return}
   setView('survey');
   const b=BLOCKS[step];
   byId('pairLabel').textContent='Блок '+(step+1)+' из '+BLOCKS.length;
@@ -279,14 +270,16 @@ function renderSurvey(){
   byId('backToResultsBtn').classList.toggle('hide',!complete());
   updateBlockStatus();
 }
-function renderDone(){
-  if(!complete()){step=firstIncompleteBlock();renderSurvey();return}
-  step=BLOCKS.length;persist();setView('done');progress();scrollTop();
-}
 function choose(index,choice,row){
   if(view!=='survey'||!PAIRS[index]||!BLOCKS[step])return;
   const b=BLOCKS[step];if(index<b.start||index>=b.start+b.length)return;
+  const wasComplete=complete();
   answers[index]=choice;persist();updateChoice(row,index);updateBlockStatus();
+  if(!wasComplete&&complete()){
+    step=BLOCKS.length;
+    persist();
+    renderResults();
+  }
 }
 function calculate(){
   if(!complete())throw Error('Не все сравнения заполнены');
@@ -382,13 +375,11 @@ byId('clearIntroBtn').addEventListener('click',reset);
 byId('prevBtn').addEventListener('click',()=>{if(step>0){step--;persist();renderSurvey();scrollTop()}});
 byId('nextBtn').addEventListener('click',()=>{
   const b=BLOCKS[step];if(b&&blockCount(b)===b.length){
-    step++;persist();if(step===BLOCKS.length)renderDone();else{renderSurvey();scrollTop()}
+    step++;persist();if(step===BLOCKS.length)renderResults();else{renderSurvey();scrollTop()}
   }
 });
 byId('jumpSelect').addEventListener('change',e=>{step=Number(e.target.value);persist();renderSurvey();scrollTop()});
 byId('backToResultsBtn').addEventListener('click',renderResults);
-byId('showResultsBtn').addEventListener('click',renderResults);
-byId('lastBtn').addEventListener('click',()=>{step=BLOCKS.length-1;persist();renderSurvey();scrollTop()});
 byId('restartBtn').addEventListener('click',reset);
 byId('editBtn').addEventListener('click',()=>{step=0;persist();renderSurvey();scrollTop()});
 byId('copyBtn').addEventListener('click',copyResults);
