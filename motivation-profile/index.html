@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f5132">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Мотивационный профиль — Академия бизнеса Б1</title>
+<style>
+:root{--green:#16a34a;--deep:#0f5132;--ink:#172033;--gray:#667085;--bg:#f3f5f7;--line:#e4e7ec;--pale:#f2fbf5;--err:#b42318}
+*{box-sizing:border-box}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Montserrat,Arial,Helvetica,sans-serif;line-height:1.48}
+button,select{font:inherit}button{cursor:pointer;touch-action:manipulation}
+button:focus-visible,select:focus-visible{outline:3px solid #82ce99;outline-offset:3px}
+button:disabled{opacity:.48;cursor:not-allowed}
+.wrap{max-width:980px;margin:auto;padding:25px 17px 62px}
+.hero{background:linear-gradient(125deg,#10492f,#187842);color:white;padding:29px 30px;border-radius:21px;box-shadow:0 12px 28px #124c3326}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:1.2px;font-weight:800;color:#c8efce;margin-bottom:8px}
+h1{font-size:clamp(26px,4vw,38px);line-height:1.16;margin:0 0 11px}h2{font-size:clamp(20px,2.9vw,25px);line-height:1.3;margin:0 0 12px}h3{font-size:17px;margin:0 0 12px}
+.hero .lead{max-width:760px;font-size:16px;margin:0;color:#eaf5ec}.hero .privacy{font-size:13px;margin:13px 0 0;color:#e0f1e6}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;margin-top:18px;box-shadow:0 5px 18px #10182809}
+p{margin:9px 0}.muted{color:var(--gray)}.small{font-size:13px}.hide{display:none!important}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:19px 0}
+.stat{border:1px solid #e1eae4;background:#f9fcfa;padding:14px;border-radius:13px}.stat strong{display:block;font-size:25px;color:var(--deep);line-height:1.15}.stat span{font-size:12px;color:#667085}
+.note{border:1px solid #e3e8eb;background:#f8fafb;border-radius:12px;padding:13px 15px;font-size:13px;color:#475467;margin-top:14px}
+.actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:23px}
+.btn{border:1px solid transparent;border-radius:12px;padding:12px 18px;min-height:46px;font-size:14px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.primary{background:var(--green);color:#fff}.secondary{background:#eef2f5;color:#344054}.ghost{background:#fff;border-color:#d9e2dc;color:#344054}.danger{background:#fff2f0;border-color:#ffd2cd;color:#a5271e}.btn:hover:not(:disabled){filter:brightness(.97)}
+.sticky{position:sticky;top:7px;z-index:10;margin-top:14px;padding:12px 15px;border:1px solid var(--line);border-radius:14px;background:#fffffff2;backdrop-filter:blur(12px);box-shadow:0 5px 17px #10182812}
+.sticky-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px;font-weight:800}
+.progress-track{background:#e7ede9;height:9px;margin-top:9px;border-radius:99px;overflow:hidden}.progress-fill{height:100%;width:0;background:var(--green);transition:width .15s}
+.kicker{display:inline-flex;background:#e8f7ec;color:#166534;border-radius:999px;font-size:12px;font-weight:850;padding:6px 11px;margin-bottom:12px}
+.question-heading{font-size:clamp(20px,3vw,27px);line-height:1.24;margin-bottom:5px}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:22px}
+.choice{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:15px;min-height:151px;width:100%;text-align:left;border:2px solid #e3e9e6;border-radius:15px;background:#fbfcfd;color:var(--ink);padding:20px;transition:background .12s,border .12s,transform .08s}
+.choice:hover{background:#f2fbf5;border-color:#91cfa5}.choice:active{transform:scale(.995)}.choice.selected{background:#eaf9ee;border-color:var(--green)}
+.choice-letter{background:#e8f2eb;color:#166534;border-radius:9px;padding:5px 10px;font-size:12px;font-weight:900}
+.choice-name{font-size:clamp(17px,2.5vw,21px);font-weight:850;line-height:1.27;overflow-wrap:anywhere}
+.choice-category{font-size:12px;color:var(--gray);margin-top:5px}
+.row-between{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.jump{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray)}.jump select{border:1px solid #d5ddd7;border-radius:9px;background:#fff;color:var(--ink);padding:8px 9px;max-width:180px}
+.shortcut{margin:14px 0 0;font-size:12px;color:#7a8493}
+.finish-mark{font-size:38px;color:var(--green);font-weight:900;margin:0 0 12px}
+.result-heading{border-bottom:1px solid var(--line);padding-bottom:17px;margin-bottom:17px}
+.result-heading p{font-size:14px;color:var(--gray)}
+.summary{border:1px solid #dbeade;background:#f5fbf6;border-radius:14px;padding:16px 18px;margin-bottom:19px}
+.summary strong{color:var(--deep)}.summary p{margin:6px 0 0;font-size:14px}
+.results-topline{display:flex;justify-content:space-between;gap:12px;align-items:flex-end;margin:21px 0 10px}.results-topline h3{margin:0}
+.score-scale{font-size:12px;color:var(--gray);text-align:right}
+.rank-list{display:grid;gap:9px}
+.rank-row{display:grid;grid-template-columns:38px minmax(0,1fr) 95px;gap:12px;align-items:center;border:1px solid #e4e8e6;border-radius:12px;padding:12px 15px;background:#fff;break-inside:avoid}
+.rank-row.top{background:#f6fcf7;border-color:#b5dec0}
+.rank-pos{color:#557162;font-size:17px;font-weight:900}
+.rank-main{min-width:0}.rank-name{font-size:15px;font-weight:850;line-height:1.28;overflow-wrap:anywhere}
+.rank-group{font-size:11px;color:#667085;margin-top:2px}.rank-track{height:7px;background:#e8efea;overflow:hidden;border-radius:99px;margin-top:8px}
+.rank-fill{height:100%;background:linear-gradient(90deg,#32ab5d,#13803d);border-radius:99px}
+.rank-score{font-weight:900;font-size:23px;text-align:right;white-space:nowrap;color:#17653a}
+.rank-score span{font-size:12px;color:#667085;font-weight:400}
+.method{border:1px solid #e0e6e8;border-radius:12px;background:#f9fafb;padding:15px 16px;color:#475467;font-size:13px;margin-top:17px}
+.reflection{margin-top:22px;border-top:1px solid #e3e7eb;padding-top:17px;font-size:14px}
+.reflection ul{margin:10px 0;padding-left:23px}.reflection li{margin:7px 0}
+.footer{text-align:center;font-size:12px;color:var(--gray);margin:21px 0 0}
+.status{font-size:13px;min-height:21px;color:#166534;margin-top:10px}
+#printTitle{display:none}
+@media(max-width:680px){.wrap{padding:12px 11px 45px}.hero{padding:23px 20px;border-radius:17px}.card{padding:18px;margin-top:12px}.stat{padding:12px 10px}.stat strong{font-size:22px}.choice-grid{grid-template-columns:1fr;gap:11px;margin-top:17px}.choice{min-height:112px;padding:15px;gap:8px}.choice-name{font-size:18px}.rank-row{grid-template-columns:26px minmax(0,1fr) 56px;padding:11px 10px;gap:8px}.rank-name{font-size:13px}.rank-score{font-size:20px}.rank-score span{font-size:10px}.actions .btn{flex:1 1 40%}.jump{width:100%;justify-content:flex-start}.shortcut{display:none}}
+@media(max-width:390px){.stats{gap:5px}.stat{padding:9px 7px}.stat span{font-size:11px}.btn{padding:11px 12px}.rank-row{grid-template-columns:24px minmax(0,1fr) 52px;gap:6px}}
+@media print{@page{size:A4;margin:13mm}html,body{background:#fff!important;color:#111}.wrap{max-width:none;padding:0}.hero,#intro,#sticky,#survey,#finished,.no-print,.footer{display:none!important}#results{display:block!important;margin:0;padding:0;border:0;box-shadow:none}#printTitle{display:block;font-size:22px;margin:0 0 14px}.result-heading{margin-bottom:9px;padding-bottom:8px}.result-heading .kicker{display:none}.result-heading h2{font-size:19px}.result-heading p{font-size:11px}.summary{padding:10px 12px;margin:0 0 12px}.summary p{font-size:11px}.rank-list{gap:5px}.rank-row{border:1px solid #dce3dc;padding:8px 10px;grid-template-columns:27px 1fr 55px}.rank-name{font-size:12px}.rank-score{font-size:17px}.rank-track{height:5px;margin-top:4px}.results-topline{margin:10px 0 7px}.method{font-size:11px;margin-top:12px;padding:9px}.reflection{margin-top:12px;padding-top:9px;font-size:11px}.reflection li{margin:3px 0}.rank-row,.method,.reflection{break-inside:avoid}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="hero">
+<div class="eyebrow">Академия бизнеса Б1 · Управление командой</div>
+<h1>Мотивационный профиль</h1>
+<p class="lead">Выберите, что важнее именно для вас в работе. На основе попарных сравнений вы получите индивидуальный рейтинг 14 мотиваторов.</p>
+<p class="privacy">Ответы и результаты остаются в вашем браузере и никуда не отправляются.</p>
+</header>
+<section class="card" id="intro">
+<h2>Как проходить опросник</h2>
+<p>В каждой паре выберите <b>один из двух факторов</b>, который для вас важнее в работе <b>сейчас</b>. Если важны оба, представьте, что приходится выбрать только один.</p>
+<p>Правильных и неправильных ответов нет. Не думайте о том, какие факторы «должны» быть важны: выбирайте в соответствии с вашими реальными приоритетами.</p>
+<div class="stats">
+<div class="stat"><strong>14</strong><span>мотиваторов</span></div>
+<div class="stat"><strong>91</strong><span>сравнение</span></div>
+<div class="stat"><strong>0–13</strong><span>баллов за фактор</span></div>
+</div>
+<div class="note">Все пары показываются по одному разу. Порядок сбалансирован, чтобы один и тот же мотиватор не появлялся много раз подряд. Можно вернуться к предыдущему ответу, а прогресс сохраняется на этом устройстве.</div>
+<div class="actions">
+<button class="btn primary" id="startBtn" type="button">Начать опросник →</button>
+<button class="btn danger hide" id="clearIntroBtn" type="button">Удалить сохранённые ответы</button>
+</div>
+<p class="small muted hide" id="resumeHint"></p>
+</section>
+<div class="sticky hide" id="sticky">
+<div class="sticky-row"><span id="progressText">Сравнение 1 из 91</span><span id="progressCount">0 / 91</span></div>
+<div class="progress-track" role="progressbar" aria-label="Заполнено сравнений" aria-valuemin="0" aria-valuemax="91" aria-valuenow="0" id="progressTrack"><div class="progress-fill" id="progressFill"></div></div>
+</div>
+<section class="card hide" id="survey">
+<span class="kicker" id="pairLabel">Сравнение 1 из 91</span>
+<h2 class="question-heading">Что для вас важнее в работе?</h2>
+<p class="muted small">Выберите один из двух вариантов.</p>
+<div class="choice-grid">
+<button type="button" class="choice" id="choice0"><span class="choice-letter">1</span><span><span class="choice-name" id="choiceName0"></span><span class="choice-category" id="choiceCategory0"></span></span></button>
+<button type="button" class="choice" id="choice1"><span class="choice-letter">2</span><span><span class="choice-name" id="choiceName1"></span><span class="choice-category" id="choiceCategory1"></span></span></button>
+</div>
+<div class="actions">
+<button class="btn secondary" id="prevBtn" type="button">← Назад</button>
+<button class="btn ghost" id="nextBtn" type="button">Следующее →</button>
+<button class="btn primary hide" id="backToResultsBtn" type="button">Вернуться к результату</button>
+</div>
+<div class="row-between" style="margin-top:17px">
+<label class="jump" for="jumpSelect">Перейти к сравнению <select id="jumpSelect" aria-label="Номер сравнения"></select></label>
+<span class="small muted" id="answeredState"></span>
+</div>
+<p class="shortcut">Можно выбирать клавишами 1 и 2 на клавиатуре.</p>
+</section>
+<section class="card hide" id="finished">
+<div class="finish-mark">✓</div>
+<h2>Все 91 сравнение завершены</h2>
+<p>Результат готов. Опросник автоматически подсчитает, сколько раз вы выбрали каждый мотиватор, и выстроит их по убыванию баллов.</p>
+<div class="actions">
+<button class="btn primary" id="showResultsBtn" type="button">Посмотреть мой профиль →</button>
+<button class="btn ghost" id="lastBtn" type="button">← Вернуться к сравнениям</button>
+</div>
+</section>
+<section class="card hide" id="results" aria-live="polite">
+<h1 id="printTitle">Мотивационный профиль</h1>
+<div class="result-heading"><span class="kicker">Ваш результат</span><h2>Мой мотивационный профиль</h2><p>Рейтинг факторов по тому, как часто вы выбирали каждый из них при сравнении с остальными.</p></div>
+<div class="summary" id="resultSummary"></div>
+<div class="results-topline"><h3>Все мотиваторы — по убыванию баллов</h3><span class="score-scale">Шкала: от 0 до 13</span></div>
+<div class="rank-list" id="rankList"></div>
+<div class="method"><b>Как читать результат.</b> Каждый мотиватор сравнивался с 13 другими. Один выбор — один балл, максимум — 13. Баллы показывают ваши <b>относительные приоритеты в рамках этого опросника</b>, а не абсолютную силу мотивации. Одинаковые баллы означают одинаковое место. Это авторский инструмент для саморефлексии и обсуждения, а не валидированная психологическая диагностика.</div>
+<div class="reflection">
+<h3>Вопросы для рефлексии</h3>
+<ul>
+<li>Насколько три ведущих мотиватора совпадают с тем, что действительно приносит вам удовлетворение от работы?</li>
+<li>Какие из значимых для вас мотиваторов поддерживаются вашей нынешней работой, а каких не хватает?</li>
+<li>Что руководитель или вы сами можете изменить в работе, чтобы важные мотиваторы проявлялись чаще?</li>
+</ul>
+</div>
+<div class="actions no-print">
+<button class="btn primary" id="copyBtn" type="button">Скопировать результат</button>
+<button class="btn secondary" id="pngBtn" type="button">Сохранить PNG</button>
+<button class="btn secondary" id="pdfBtn" type="button">Сохранить PDF</button>
+<button class="btn ghost" id="editBtn" type="button">Изменить ответы</button>
+<button class="btn danger" id="restartBtn" type="button">Пройти заново</button>
+</div>
+<div class="status no-print" id="exportStatus" role="status"></div>
+</section>
+<footer class="footer">Академия бизнеса Б1 · Данные хранятся только на вашем устройстве</footer>
+</main>
+<noscript><p style="padding:20px;color:#a52a2a">Для работы опросника необходимо включить JavaScript.</p></noscript>
+<script>
+'use strict';
+/* Исходные 14 мотиваторов — авторский опросник Академии бизнеса Б1.
+   Каждая неупорядоченная пара предъявляется ровно один раз; 91 решение. */
+const FACTORS = [
+  {code:'ОиБ',name:'Оплата и бонусы',group:'Деньги'},
+  {code:'МУ',name:'Моральное удовлетворение',group:'«Я»'},
+  {code:'Пр',name:'Признание',group:'Окружение'},
+  {code:'ВР',name:'Возможность развития',group:'«Я»'},
+  {code:'СЗ',name:'Сложные задачи',group:'Работа'},
+  {code:'К',name:'Коллеги',group:'Окружение'},
+  {code:'Р',name:'Разнообразие задач',group:'Работа'},
+  {code:'Л',name:'Влияние на других / лидерство',group:'Окружение'},
+  {code:'РО',name:'Рабочее окружение (атмосфера, офис)',group:'Деньги'},
+  {code:'С',name:'Стабильность',group:'Деньги'},
+  {code:'Ст',name:'Статус',group:'Окружение'},
+  {code:'РОф',name:'Расположение офиса',group:'Деньги'},
+  {code:'СВ',name:'Свободное время / баланс работы и личной жизни',group:'Работа'},
+  {code:'ТС',name:'Творческое самовыражение',group:'«Я»'}
+];
+const KEY='b1_motivation_profile_v1';
+function pairsSchedule(){
+  const n=FACTORS.length;
+  let ring=Array.from({length:n},(_,i)=>i);
+  const pairs=[];
+  let seed=83029;
+  function rnd(){seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296}
+  for(let round=0;round<n-1;round++){
+    const group=[];
+    for(let i=0;i<n/2;i++){
+      const a=ring[i],b=ring[n-1-i];
+      const low=Math.min(a,b),high=Math.max(a,b),d=high-low;
+      const left=d<7?low:d>7?high:(low%2===0?low:high);
+      group.push([left,left===a?b:a]);
+    }
+    for(let k=group.length-1;k>0;k--){const j=Math.floor(rnd()*(k+1));[group[k],group[j]]=[group[j],group[k]]}
+    pairs.push(...group);
+    ring=[ring[0],ring[n-1],...ring.slice(1,n-1)];
+  }
+  return pairs;
+}
+const PAIRS=pairsSchedule(),TOTAL=PAIRS.length;
+function checkSchedule(){
+  if(TOTAL!==91)throw Error('Неверное число сравнений');
+  const seen=new Set(),sides=Array(14).fill(0),degree=Array(14).fill(0);
+  PAIRS.forEach(([a,b])=>{if(a===b)throw Error('Одинаковые мотиваторы');let k=[a,b].sort((x,y)=>x-y).join('-');if(seen.has(k))throw Error('Повтор пары');seen.add(k);degree[a]++;degree[b]++;sides[a]++});
+  if(degree.some(v=>v!==13)||sides.some(v=>v<6||v>7))throw Error('Несбалансированные сравнения');
+}
+checkSchedule();
+const byId=id=>document.getElementById(id);
+let answers=Array(TOTAL).fill(null),step=0,view='intro';
+function countAnswered(){return answers.filter(a=>a===0||a===1).length}
+function complete(){return countAnswered()===TOTAL}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify({version:1,answers,step}))}catch(e){}}
+function restore(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(KEY)||'null');
+    if(raw&&raw.version===1&&Array.isArray(raw.answers)&&raw.answers.length===TOTAL&&raw.answers.every(a=>a===0||a===1||a===null)){
+      answers=raw.answers.slice();step=Number.isInteger(raw.step)?Math.min(TOTAL,Math.max(0,raw.step)):0;
+    }
+  }catch(e){}
+}
+function setView(target){
+  view=target;
+  for(const id of ['intro','survey','finished','results'])byId(id).classList.toggle('hide',id!==(target==='done'?'finished':target));
+  byId('sticky').classList.toggle('hide',target!=='survey'&&target!=='done');
+}
+function progress(){
+  const k=countAnswered();
+  byId('progressCount').textContent=k+' / '+TOTAL;
+  byId('progressText').textContent=step===TOTAL?'Все сравнения завершены':'Сравнение '+(step+1)+' из '+TOTAL;
+  byId('progressFill').style.width=(100*k/TOTAL)+'%';
+  byId('progressTrack').setAttribute('aria-valuenow',String(k));
+}
+function renderIntro(){
+  setView('intro');
+  const n=countAnswered();
+  byId('startBtn').textContent=n?(complete()?'Посмотреть результат →':'Продолжить ('+n+' из '+TOTAL+') →'):'Начать опросник →';
+  byId('clearIntroBtn').classList.toggle('hide',n===0);
+  byId('resumeHint').classList.toggle('hide',n===0);
+  byId('resumeHint').textContent=n?'Сохранено ответов: '+n+' из '+TOTAL+'. Можно продолжить на этом устройстве.':'';
+}
+function scrollTop(){window.scrollTo({top:0,behavior:'instant'})}
+function renderSurvey(){
+  if(step>=TOTAL){renderDone();return}
+  setView('survey');progress();
+  const pair=PAIRS[step];
+  byId('pairLabel').textContent='Сравнение '+(step+1)+' из '+TOTAL;
+  for(let i=0;i<2;i++){
+    const f=FACTORS[pair[i]];
+    byId('choiceName'+i).textContent=f.name;
+    byId('choiceCategory'+i).textContent=f.group;
+    byId('choice'+i).classList.toggle('selected',answers[step]===i);
+    byId('choice'+i).setAttribute('aria-pressed',answers[step]===i?'true':'false');
+  }
+  byId('prevBtn').disabled=step===0;
+  byId('nextBtn').disabled=answers[step]===null;
+  byId('nextBtn').textContent=step===TOTAL-1?'Завершить →':'Следующее →';
+  byId('backToResultsBtn').classList.toggle('hide',!complete());
+  byId('jumpSelect').value=String(step);
+  byId('answeredState').textContent=answers[step]===null?'Выбор ещё не сделан':'Выбран вариант '+(answers[step]+1);
+}
+function renderDone(){
+  if(!complete()){step=answers.findIndex(a=>a===null);renderSurvey();return}
+  step=TOTAL;persist();setView('done');progress();scrollTop();
+}
+function choose(i){
+  if(view!=='survey'||step>=TOTAL)return;
+  answers[step]=i;
+  if(step===TOTAL-1)step=TOTAL;else step++;
+  persist();
+  if(step===TOTAL)renderDone();else renderSurvey();
+}
+function calculate(){
+  if(!complete())throw Error('Не все сравнения заполнены');
+  const scores=Array(FACTORS.length).fill(0);
+  PAIRS.forEach((pair,k)=>scores[pair[answers[k]]]++);
+  if(scores.reduce((a,b)=>a+b,0)!==91||scores.some(x=>x<0||x>13))throw Error('Ошибка подсчёта баллов');
+  const ranked=FACTORS.map((f,i)=>({...f,score:scores[i],index:i})).sort((a,b)=>b.score-a.score||a.index-b.index);
+  let last=-1,rank=0;
+  ranked.forEach((f,i)=>{if(f.score!==last){rank=i+1;last=f.score}f.rank=rank});
+  return ranked;
+}
+function textResult(items){
+  return 'МОТИВАЦИОННЫЙ ПРОФИЛЬ\n'+items.map(f=>f.rank+'. '+f.name+' — '+f.score+' из 13').join('\n')+
+    '\n\nБаллы — число выборов из 13 сравнений. Одинаковые баллы соответствуют одному месту. Это авторский инструмент саморефлексии, а не психологическая диагностика.';
+}
+function renderResults(){
+  if(!complete()){step=answers.findIndex(a=>a===null);renderSurvey();return}
+  const items=calculate();
+  setView('results');
+  const highest=items.filter(f=>f.score===items[0].score);
+  const names=highest.map(f=>f.name).join(', ');
+  byId('resultSummary').replaceChildren();
+  const lead=document.createElement('strong');lead.textContent=highest.length===1?'Ваш ведущий мотиватор:':'Ваши ведущие мотиваторы:';
+  const detail=document.createElement('p');detail.textContent=names+' — '+items[0].score+' из 13 возможных баллов.';
+  const context=document.createElement('p');context.textContent='Всего сделано 91 сравнение. Результат отражает приоритеты именно на момент заполнения.';
+  byId('resultSummary').append(lead,detail,context);
+  const root=byId('rankList');root.replaceChildren();
+  items.forEach(f=>{
+    const row=document.createElement('div');row.className='rank-row'+(f.rank===1?' top':'');
+    const rank=document.createElement('div');rank.className='rank-pos';rank.textContent=f.rank+'.';
+    const main=document.createElement('div');main.className='rank-main';
+    const name=document.createElement('div');name.className='rank-name';name.textContent=f.name;
+    const group=document.createElement('div');group.className='rank-group';group.textContent=f.group;
+    const track=document.createElement('div');track.className='rank-track';track.setAttribute('aria-hidden','true');
+    const fill=document.createElement('div');fill.className='rank-fill';fill.style.width=(100*f.score/13)+'%';
+    track.append(fill);main.append(name,group,track);
+    const score=document.createElement('div');score.className='rank-score';score.textContent=String(f.score)+' ';
+    const max=document.createElement('span');max.textContent='/ 13';score.append(max);
+    row.append(rank,main,score);root.append(row);
+  });
+  byId('exportStatus').textContent='';
+  scrollTop();
+}
+function reset(){
+  if(!window.confirm('Удалить все ответы и пройти опросник заново?'))return;
+  answers=Array(TOTAL).fill(null);step=0;
+  try{localStorage.removeItem(KEY)}catch(e){}
+  renderIntro();scrollTop();
+}
+async function copyResults(){
+  const txt=textResult(calculate());
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(txt)}
+    else{const t=document.createElement('textarea');t.value=txt;document.body.append(t);t.select();if(!document.execCommand('copy'))throw Error('copy');t.remove()}
+    byId('exportStatus').textContent='Результат скопирован.';
+  }catch(e){byId('exportStatus').textContent='Не удалось скопировать автоматически. Можно выделить рейтинг на странице и скопировать вручную.'}
+}
+function savePng(){
+  try{
+    const items=calculate(),scale=2,width=1200,height=1420;
+    const canvas=document.createElement('canvas');canvas.width=width*scale;canvas.height=height*scale;
+    const c=canvas.getContext('2d');c.scale(scale,scale);
+    c.fillStyle='#ffffff';c.fillRect(0,0,width,height);
+    c.fillStyle='#0f5132';c.fillRect(0,0,width,148);
+    c.fillStyle='#d5f5df';c.font='700 19px Arial';c.fillText('АКАДЕМИЯ БИЗНЕСА Б1 · УПРАВЛЕНИЕ КОМАНДОЙ',62,44);
+    c.fillStyle='#ffffff';c.font='bold 39px Arial';c.fillText('Мотивационный профиль',62,105);
+    c.fillStyle='#172033';c.font='bold 22px Arial';c.fillText('Рейтинг мотиваторов',62,207);
+    c.fillStyle='#667085';c.font='16px Arial';c.fillText('Баллы: количество выборов из 13 возможных',62,237);
+    items.forEach((f,i)=>{
+      const y=268+i*71;
+      c.fillStyle=f.rank===1?'#f2faf4':'#f9fafb';c.fillRect(62,y,1076,64);
+      c.fillStyle='#166534';c.font='bold 20px Arial';c.fillText(f.rank+'.',78,y+30);
+      c.fillStyle='#172033';c.font='bold 19px Arial';c.fillText(f.name,131,y+25);
+      c.fillStyle='#667085';c.font='14px Arial';c.fillText(f.group,131,y+44);
+      c.fillStyle='#e4eee7';c.fillRect(785,y+26,242,12);
+      c.fillStyle='#16a34a';c.fillRect(785,y+26,242*f.score/13,12);
+      c.fillStyle='#145c39';c.font='bold 21px Arial';c.textAlign='right';c.fillText(f.score+' / 13',1115,y+35);c.textAlign='left';
+    });
+    c.fillStyle='#475467';c.font='16px Arial';c.fillText('Относительные предпочтения на момент заполнения.',62,1320);
+    c.fillText('Авторский инструмент для рефлексии; не психометрическая диагностика.',62,1351);
+    const a=document.createElement('a');a.download='motivacionnyy-profil-b1.png';a.href=canvas.toDataURL('image/png');document.body.append(a);a.click();a.remove();
+    byId('exportStatus').textContent='PNG подготовлен.';
+  }catch(e){byId('exportStatus').textContent='Не удалось создать PNG. Попробуйте сохранить результат в PDF.'}
+}
+restore();
+const select=byId('jumpSelect');
+for(let i=0;i<TOTAL;i++){const option=document.createElement('option');option.value=String(i);option.textContent='№ '+(i+1);select.append(option)}
+byId('startBtn').addEventListener('click',()=>{if(complete())renderResults();else{if(answers[step]!==null||step===TOTAL){step=answers.findIndex(a=>a===null)}renderSurvey();scrollTop()}});
+byId('clearIntroBtn').addEventListener('click',reset);
+byId('choice0').addEventListener('click',()=>choose(0));
+byId('choice1').addEventListener('click',()=>choose(1));
+byId('prevBtn').addEventListener('click',()=>{if(step>0){step--;persist();renderSurvey()}});
+byId('nextBtn').addEventListener('click',()=>{if(answers[step]!==null){step++;persist();if(step===TOTAL)renderDone();else renderSurvey()}});
+byId('jumpSelect').addEventListener('change',e=>{step=Number(e.target.value);persist();renderSurvey()});
+byId('backToResultsBtn').addEventListener('click',renderResults);
+byId('showResultsBtn').addEventListener('click',renderResults);
+byId('lastBtn').addEventListener('click',()=>{step=TOTAL-1;persist();renderSurvey()});
+byId('restartBtn').addEventListener('click',reset);
+byId('editBtn').addEventListener('click',()=>{step=0;persist();renderSurvey();scrollTop()});
+byId('copyBtn').addEventListener('click',copyResults);
+byId('pngBtn').addEventListener('click',savePng);
+byId('pdfBtn').addEventListener('click',()=>window.print());
+document.addEventListener('keydown',e=>{
+  if(view!=='survey'||e.ctrlKey||e.metaKey||e.altKey||e.repeat)return;
+  if(['SELECT','INPUT','TEXTAREA'].includes(document.activeElement.tagName))return;
+  if(e.key==='1'||e.key==='2'){e.preventDefault();choose(Number(e.key)-1)}
+});
+renderIntro();
+</script>
+</body>
+</html>
