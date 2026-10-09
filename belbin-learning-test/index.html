@@ -164,25 +164,80 @@ function fatal(message){show('results',false);show('survey',false);show('intro',
 function reset(){if(!confirm('Удалить все ваши ответы и начать опросник заново?'))return;answers=zeroAnswers();current=0;scoreResults=null;try{localStorage.removeItem(KEY_ID)}catch(e){};setView('intro');window.scrollTo({top:0,behavior:'instant'})}
 async function copyResult(){try{await navigator.clipboard.writeText(resultsText());byId('exportStatus').textContent='Результат скопирован.'}catch(e){const ta=document.createElement('textarea');ta.value=resultsText();ta.style.position='fixed';ta.style.left='-10000px';document.body.append(ta);ta.select();const ok=document.execCommand('copy');ta.remove();byId('exportStatus').textContent=ok?'Результат скопирован.':'Не удалось скопировать автоматически: попробуйте выделить текст на странице.'}}
 // Standalone Canvas export: does not load fonts, images, scripts or data from the network.
-async function savePNG(){try{runChecks();if(!scoreResults||!validateAnswers(answers))throw Error('Результат ещё не готов');const canvas=document.createElement('canvas');canvas.width=1400;canvas.height=2110;const c=canvas.getContext('2d');c.fillStyle='#fff';c.fillRect(0,0,1400,2110);
- const green='#166b3d',ink='#20252a',muted='#64706a';function txt(str,x,y,size=24,color=ink,weight='normal',align='left'){c.fillStyle=color;c.font=`${weight} ${size}px Arial, sans-serif`;c.textAlign=align;c.fillText(str,x,y)}
- function line(x,y,w,color='#dce3df'){c.fillStyle=color;c.fillRect(x,y,w,2)}
- function wrap(str,x,y,maxWidth=580,lh=31,size=23,col=ink){c.fillStyle=col;c.font=`${size}px Arial,sans-serif`;c.textAlign='left';let yy=y, words=str.split(/\s+/),part='';for(const word of words){const next=part?part+' '+word:word;if(c.measureText(next).width>maxWidth&&part){c.fillText(part,x,yy);yy+=lh;part=word}else part=next}if(part){c.fillText(part,x,yy);yy+=lh}return yy}
- c.fillStyle=green;c.fillRect(0,0,1400,18);txt('Опросник по командным ролям',74,100,42,ink,'bold');txt('На основе модели Белбина',74,147,29,green,'bold');txt('7 секций · 8 командных ролей · 70 баллов',74,191,23,muted);line(74,237,1250);
- const scores=SPIDER_ORDER.map(r=>scoreResults[r]);
- const exportedSvg=makeSpider();
- const xml=new XMLSerializer().serializeToString(exportedSvg);
- const img=new Image();
- await new Promise((resolve,reject)=>{
-  img.onload=resolve;img.onerror=()=>reject(Error('Не удалось построить изображение профиля'));
-  img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(xml);
- });
- c.drawImage(img,215,264,970,819);
- line(74,1090,1250);
- txt('Баллы по ролям',74,1141,32,ink,'bold');let x0=74,y0=1194;SPIDER_ORDER.forEach((r,i)=>{const col=i%2,row=Math.floor(i/2);const x=x0+col*639,y=y0+row*77;txt(ROLE_INFO[r].name,x,y,22);txt(`${r}  ·  ${scoreResults[r]}`,x+564,y,23,green,'bold','right')});line(74,1497,1250);
- txt('Как использовать результат',74,1550,31,ink,'bold');let y=1600;y=wrap('Наиболее выраженные: '+fmtNames(SPIDER_ORDER.filter(r=>scoreResults[r]===Math.max(...scores)))+'.',74,y,1230,33,24);y+=15;y=wrap('Менее выраженные: '+fmtNames(SPIDER_ORDER.filter(r=>scoreResults[r]===Math.min(...scores)))+'.',74,y,1230,33,24);y+=24;y=wrap('Подумайте, в каких рабочих ситуациях ваши сильные стороны особенно заметны и какие функции вы берёте на себя реже. Невысокий балл не означает отсутствия способности.',74,y,1230,33,23);line(74,1974,1250);wrap('Учебный инструмент для саморефлексии, не тип личности и не официальный отчёт Belbin. Все данные обработаны исключительно в браузере.',74,2019,1230,30,19,muted);
- const aLink=document.createElement('a');aLink.download='profil-komandnyh-rolej.png';aLink.href=canvas.toDataURL('image/png');document.body.append(aLink);aLink.click();aLink.remove();byId('exportStatus').textContent='PNG сохранён (или открыт в новом окне на мобильном устройстве).';
- }catch(err){byId('exportStatus').textContent='Не удалось сохранить PNG: '+err.message}}
+async function savePNG(){
+ try{
+  runChecks();
+  if(!scoreResults||!validateAnswers(answers))throw Error('Результат ещё не готов');
+  const canvas=document.createElement('canvas');canvas.width=1400;canvas.height=2400;
+  const c=canvas.getContext('2d');
+  if(!c)throw Error('Не удалось подготовить изображение');
+  c.fillStyle='#fff';c.fillRect(0,0,canvas.width,canvas.height);
+  const green='#166b3d',ink='#20252a',muted='#64706a';
+  function txt(str,x,y,size=24,color=ink,weight='normal',align='left'){
+   c.fillStyle=color;c.font=`${weight} ${size}px Arial, sans-serif`;c.textAlign=align;c.fillText(str,x,y);
+  }
+  function line(x,y,w,color='#dce3df'){c.fillStyle=color;c.fillRect(x,y,w,2)}
+  function wrap(str,x,y,maxWidth=580,lh=31,size=23,col=ink,weight='normal'){
+   c.fillStyle=col;c.font=`${weight} ${size}px Arial,sans-serif`;c.textAlign='left';
+   let yy=y,part='';
+   for(const word of String(str).split(/\s+/)){
+    const next=part?part+' '+word:word;
+    if(c.measureText(next).width>maxWidth&&part){c.fillText(part,x,yy);yy+=lh;part=word}else part=next;
+   }
+   if(part){c.fillText(part,x,yy);yy+=lh}return yy;
+  }
+  // The PNG intentionally excludes technical completion counts shown elsewhere on the page.
+  c.fillStyle=green;c.fillRect(0,0,1400,14);
+  txt('Опросник по командным ролям',74,96,42,ink,'bold');
+  txt('На основе модели Белбина',74,140,29,green,'bold');
+  line(74,183,1250);
+  const exportedSvg=makeSpider();
+  const xml=new XMLSerializer().serializeToString(exportedSvg);
+  const img=new Image();
+  await new Promise((resolve,reject)=>{
+   img.onload=resolve;img.onerror=()=>reject(Error('Не удалось построить изображение профиля'));
+   img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(xml);
+  });
+  c.drawImage(img,215,203,970,819);
+  line(74,1038,1250);
+  txt('Баллы по ролям',74,1093,32,ink,'bold');
+  const x0=74,y0=1153;
+  SPIDER_ORDER.forEach((r,i)=>{
+   const col=i%2,row=Math.floor(i/2),x=x0+col*639,y=y0+row*70;
+   txt(ROLE_INFO[r].name,x,y,22);
+   txt(`${r}  ·  ${scoreResults[r]}`,x+564,y,23,green,'bold','right');
+  });
+  line(74,1407,1250);
+  // Two result summaries, followed by exactly the three reflection questions from the website.
+  let y=1464;
+  const scores=SPIDER_ORDER.map(r=>scoreResults[r]);
+  const top=Math.max(...scores),bottom=Math.min(...scores);
+  const topRoles=SPIDER_ORDER.filter(r=>scoreResults[r]===top);
+  const bottomRoles=SPIDER_ORDER.filter(r=>scoreResults[r]===bottom);
+  txt('Наиболее выраженные роли',74,y,29,ink,'bold');
+  y=wrap(`${fmtNames(topRoles)} — ${top} ${scoreWord(top)}`,74,y+40,1250,33,23);y+=17;
+  txt('Наименее выраженные роли',74,y,29,ink,'bold');
+  y=wrap(`${fmtNames(bottomRoles)} — ${bottom} ${scoreWord(bottom)}`,74,y+40,1250,33,23);y+=30;
+  line(74,y-13,1250);
+  txt('Вопросы для рефлексии',74,y+39,29,ink,'bold');
+  y+=86;
+  const questions=[
+   'В каких ситуациях ваши наиболее выраженные роли приносят команде наибольшую пользу?',
+   'Какие командные задачи вы обычно берёте на себя реже?',
+   'Как вы можете использовать этот профиль в ближайшем командном проекте?'
+  ];
+  for(const q of questions){
+   c.beginPath();c.fillStyle='#16a34a';c.arc(85,y-8,6,0,Math.PI*2);c.fill();
+   y=wrap(q,111,y,1208,33,23);y+=19;
+  }
+  // Crop the generated image to the content instead of leaving a large blank bottom area.
+  const out=document.createElement('canvas');out.width=1400;out.height=Math.ceil(y+50);
+  out.getContext('2d').drawImage(canvas,0,0,1400,out.height,0,0,1400,out.height);
+  const aLink=document.createElement('a');aLink.download='profil-komandnyh-rolej.png';
+  aLink.href=out.toDataURL('image/png');document.body.append(aLink);aLink.click();aLink.remove();
+  byId('exportStatus').textContent='PNG сохранён (или открыт в новом окне на мобильном устройстве).';
+ }catch(err){byId('exportStatus').textContent='Не удалось сохранить PNG: '+err.message;}
+}
 function start(){runChecks();restore();byId('begin').onclick=()=>{showSurvey()};byId('introReset').onclick=reset;byId('prev').onclick=back;byId('next').onclick=advance;byId('clear').onclick=reset;byId('copy').onclick=copyResult;byId('png').onclick=savePNG;byId('pdf').onclick=()=>window.print();byId('edit').onclick=()=>{current=6;showSurvey()};byId('restart').onclick=reset;
  if(page==='results')showResults();else if(page==='survey')showSurvey();else setView('intro');}
 try{start()}catch(err){fatal('Не удалось запустить опросник: '+err.message)}
