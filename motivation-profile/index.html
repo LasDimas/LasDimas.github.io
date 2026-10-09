@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f5132">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'none'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
-<title>Мотивационный профиль — Академия бизнеса Б1</title>
+<title>Мотивационный профиль</title>
 <style>
 :root{--green:#16a34a;--deep:#0f5132;--ink:#172033;--gray:#667085;--bg:#f3f5f7;--line:#e4e7ec;--pale:#f2fbf5;--err:#b42318}
 *{box-sizing:border-box}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
@@ -70,7 +70,6 @@ p{margin:9px 0}.muted{color:var(--gray)}.small{font-size:13px}.hide{display:none
 <body>
 <main class="wrap">
 <header class="hero">
-<div class="eyebrow">Академия бизнеса Б1 · Управление командой</div>
 <h1>Мотивационный профиль</h1>
 <p class="lead">Выберите, что важнее именно для вас в работе. На основе попарных сравнений вы получите индивидуальный рейтинг 14 мотиваторов.</p>
 <p class="privacy">Ответы и результаты остаются в вашем браузере и никуда не отправляются.</p>
@@ -129,7 +128,7 @@ p{margin:9px 0}.muted{color:var(--gray)}.small{font-size:13px}.hide{display:none
 <div class="summary" id="resultSummary"></div>
 <div class="results-topline"><h3>Все мотиваторы — по убыванию баллов</h3><span class="score-scale">Шкала: от 0 до 13</span></div>
 <div class="rank-list" id="rankList"></div>
-<div class="method"><b>Как читать результат.</b> Каждый мотиватор сравнивался с 13 другими. Один выбор — один балл, максимум — 13. Баллы показывают ваши <b>относительные приоритеты в рамках этого опросника</b>, а не абсолютную силу мотивации. Одинаковые баллы означают одинаковое место. Это авторский инструмент для саморефлексии и обсуждения, а не валидированная психологическая диагностика.</div>
+<div class="method"><b>Как читать результат.</b> Каждый мотиватор сравнивался с 13 другими. Один выбор — один балл, максимум — 13. Баллы показывают ваши <b>относительные приоритеты в рамках этого опросника</b>, а не абсолютную силу мотивации. Одинаковые баллы означают одинаковое место. Опросник помогает определить относительные приоритеты в работе и не является психологической диагностикой.</div>
 <div class="reflection">
 <h3>Вопросы для рефлексии</h3>
 <ul>
@@ -152,7 +151,7 @@ p{margin:9px 0}.muted{color:var(--gray)}.small{font-size:13px}.hide{display:none
 <noscript><p style="padding:20px;color:#a52a2a">Для работы опросника необходимо включить JavaScript.</p></noscript>
 <script>
 'use strict';
-/* Исходные 14 мотиваторов — авторский опросник Академии бизнеса Б1.
+/* Исходные 14 мотиваторов из исходного рабочего опросника.
    Каждая неупорядоченная пара предъявляется ровно один раз; 91 решение. */
 const FACTORS = [
   {code:'ОиБ',name:'Оплата и бонусы',group:'Деньги'},
@@ -275,7 +274,7 @@ function calculate(){
 }
 function textResult(items){
   return 'МОТИВАЦИОННЫЙ ПРОФИЛЬ\n'+items.map(f=>f.rank+'. '+f.name+' — '+f.score+' из 13').join('\n')+
-    '\n\nБаллы — число выборов из 13 сравнений. Одинаковые баллы соответствуют одному месту. Это авторский инструмент саморефлексии, а не психологическая диагностика.';
+    '\n\nБаллы — число выборов из 13 сравнений. Одинаковые баллы соответствуют одному месту. Опросник предназначен для обсуждения рабочих приоритетов, а не для психологической диагностики.';
 }
 function renderResults(){
   if(!complete()){step=answers.findIndex(a=>a===null);renderSurvey();return}
@@ -326,7 +325,7 @@ function savePng(){
     const c=canvas.getContext('2d');c.scale(scale,scale);
     c.fillStyle='#ffffff';c.fillRect(0,0,width,height);
     c.fillStyle='#0f5132';c.fillRect(0,0,width,148);
-    c.fillStyle='#d5f5df';c.font='700 19px Arial';c.fillText('АКАДЕМИЯ БИЗНЕСА Б1 · УПРАВЛЕНИЕ КОМАНДОЙ',62,44);
+    c.fillStyle='#d5f5df';c.font='700 19px Arial';c.fillText('РЕЗУЛЬТАТ ОПРОСНИКА',62,44);
     c.fillStyle='#ffffff';c.font='bold 39px Arial';c.fillText('Мотивационный профиль',62,105);
     c.fillStyle='#172033';c.font='bold 22px Arial';c.fillText('Рейтинг мотиваторов',62,207);
     c.fillStyle='#667085';c.font='16px Arial';c.fillText('Баллы: количество выборов из 13 возможных',62,237);
@@ -341,7 +340,7 @@ function savePng(){
       c.fillStyle='#145c39';c.font='bold 21px Arial';c.textAlign='right';c.fillText(f.score+' / 13',1115,y+35);c.textAlign='left';
     });
     c.fillStyle='#475467';c.font='16px Arial';c.fillText('Относительные предпочтения на момент заполнения.',62,1320);
-    c.fillText('Авторский инструмент для рефлексии; не психометрическая диагностика.',62,1351);
+    c.fillText('Результат не является психологической диагностикой.',62,1351);
     const a=document.createElement('a');a.download='motivacionnyy-profil-b1.png';a.href=canvas.toDataURL('image/png');document.body.append(a);a.click();a.remove();
     byId('exportStatus').textContent='PNG подготовлен.';
   }catch(e){byId('exportStatus').textContent='Не удалось создать PNG. Попробуйте сохранить результат в PDF.'}
