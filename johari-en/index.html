@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Johari Window Questionnaire</title>
+  <style>
+    :root{
+      --green:#16a34a;
+      --green-dark:#166534;
+      --green-soft:#dcfce7;
+      --ink:#172033;
+      --muted:#667085;
+      --line:#d0d5dd;
+      --paper:#ffffff;
+      --bg:#f3f5f7;
+      --blue:#2563eb;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      color:var(--ink);
+      background:var(--bg);
+      line-height:1.45;
+    }
+    .wrap{max-width:980px;margin:0 auto;padding:28px 18px 64px}
+    .hero{
+      background:linear-gradient(135deg,#0f5132 0%,#17803f 100%);
+      color:white;
+      border-radius:20px;
+      padding:28px 30px;
+      box-shadow:0 12px 30px rgba(15,81,50,.18);
+    }
+    h1{font-size:34px;line-height:1.1;margin:0 0 10px}
+    .subtitle{font-size:17px;margin:0;opacity:.92}
+    .privacy{margin-top:14px;font-size:13px;opacity:.82}
+    .panel{
+      background:var(--paper);
+      border:1px solid #e4e7ec;
+      border-radius:18px;
+      padding:24px;
+      margin-top:18px;
+      box-shadow:0 5px 18px rgba(16,24,40,.06);
+    }
+    .instructions h2,.results h2{margin:0 0 12px;font-size:23px}
+    .instructions p{margin:8px 0}
+    .pair-examples{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .chip{background:#f2f4f7;border:1px solid #e4e7ec;border-radius:999px;padding:6px 10px;font-size:13px}
+    .sticky{
+      position:sticky;top:8px;z-index:20;
+      margin:14px 0;
+      background:rgba(255,255,255,.96);
+      backdrop-filter: blur(8px);
+      border:1px solid #e4e7ec;
+      border-radius:14px;
+      padding:12px 14px;
+      box-shadow:0 5px 18px rgba(16,24,40,.07);
+    }
+    .progress-row{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;font-weight:700}
+    .bar{height:9px;background:#e9ecef;border-radius:999px;overflow:hidden;margin-top:8px}
+    .bar>div{height:100%;width:0;background:var(--green);transition:width .2s ease}
+    .question{padding:22px 22px 20px;margin-top:14px}
+    .question.answered{border-color:#a7d8b7;box-shadow:0 5px 18px rgba(22,163,74,.07)}
+    .qhead{display:flex;align-items:flex-start;gap:12px;margin-bottom:15px}
+    .qnum{flex:0 0 34px;height:34px;border-radius:50%;background:#ecfdf3;color:var(--green-dark);display:grid;place-items:center;font-weight:800}
+    .qtext{font-size:17px;font-weight:700;padding-top:4px}
+    .answer{display:grid;grid-template-columns:34px 1fr;gap:10px;padding:11px 12px;border-radius:11px;background:#f9fafb;margin:8px 0;border:1px solid #eaecf0}
+    .letter{font-weight:800;color:var(--green-dark)}
+    .score-label{font-size:13px;color:var(--muted);margin:14px 0 8px}
+    .score-slider-row{
+      display:grid;grid-template-columns:72px minmax(120px,1fr) 72px;gap:12px;align-items:center;
+      padding:10px 12px;border:1px solid #e4e7ec;border-radius:12px;background:#fbfcfd;
+    }
+    .score-end{display:flex;align-items:baseline;justify-content:center;gap:6px;font-size:16px;font-weight:800;color:#344054;white-space:nowrap}
+    .score-end .score-live{min-width:18px;text-align:center;color:var(--green-dark);font-size:18px}
+    .range-wrap{position:relative;padding:2px 0 18px}
+    .score-range{-webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:999px;background:#e4e7ec;outline:none;margin:0;cursor:pointer}
+    .score-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:26px;height:26px;border-radius:50%;background:var(--green);border:3px solid #fff;box-shadow:0 1px 5px rgba(16,24,40,.25);cursor:pointer}
+    .score-range::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--green);border:3px solid #fff;box-shadow:0 1px 5px rgba(16,24,40,.25);cursor:pointer}
+    .slider-hint{position:absolute;left:0;right:0;bottom:-1px;text-align:center;font-size:11px;color:#98a2b3;pointer-events:none}
+    .question.answered .score-slider-row{border-color:#a7d8b7;background:#f8fcf9}
+    .question.answered .slider-hint{display:none}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:20px}
+    button.primary,button.secondary{
+      border:0;border-radius:11px;padding:12px 18px;font-size:15px;font-weight:800;cursor:pointer;
+    }
+    button.primary{background:var(--green);color:white}
+    button.primary:disabled{background:#b7c0ba;cursor:not-allowed}
+    button.secondary{background:#eef2f6;color:#344054}
+    .hint{font-size:13px;color:var(--muted)}
+    .results{display:none;margin-top:22px}
+    .results.show{display:block}
+    .score-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:15px 0 22px}
+    .score-card{border:1px solid #e4e7ec;border-radius:14px;padding:14px 16px;background:#fbfcfd}
+    .score-card .name{font-size:13px;color:var(--muted);margin-bottom:4px}
+    .score-card .value{font-size:28px;font-weight:900;color:var(--green-dark)}
+    .score-card .max{font-size:14px;color:var(--muted);font-weight:400}
+
+    .window-wrap{max-width:690px;margin:18px auto 10px}
+    .chart-head-row,.chart-row{display:grid;grid-template-columns:52px 1fr;gap:8px;align-items:stretch}
+    .x-title{text-align:center;font-weight:800;margin-bottom:8px}
+    .y-title{writing-mode:vertical-rl;transform:rotate(180deg);display:flex;align-items:center;justify-content:center;font-weight:800;text-align:center}
+    .johari{
+      width:100%;aspect-ratio:1/1;
+      border:3px solid #344054;
+      display:grid;
+      position:relative;
+      background:white;
+      overflow:hidden;
+    }
+    .pane{display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;border:1px solid rgba(52,64,84,.5);font-weight:900;font-size:clamp(12px,2vw,22px);overflow:hidden}
+    .pane small{display:block;font-weight:500;font-size:.63em;margin-top:4px;line-height:1.25}
+    .open{background:#dcfce7}
+    .blind{background:#fef3c7}
+    .hidden{background:#dbeafe}
+    .unknown{background:#f1f5f9}
+    .axis-top,.axis-left{font-size:11px;color:#475467;font-weight:600}
+    .axis-top{position:relative;height:18px;margin-bottom:3px}
+    .axis-top span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+    .axis-top span:first-child{transform:none}
+    .axis-top span:last-child{transform:translateX(-100%)}
+    .axis-left{position:absolute;left:-31px;top:0;height:100%;width:25px}
+    .axis-left span{position:absolute;right:0;transform:translateY(-50%);white-space:nowrap}
+    .axis-left span:first-child{transform:none}
+    .axis-left span:last-child{transform:translateY(-100%)}
+    .chart-box{position:relative}
+    .grid-lines{position:absolute;inset:0;pointer-events:none;z-index:5}
+    .grid-line-v,.grid-line-h{position:absolute;background:rgba(52,64,84,.22)}
+    .grid-line-v{top:0;bottom:0;width:1px}
+    .grid-line-h{left:0;right:0;height:1px}
+    .pane{position:relative;z-index:1}
+    .percentile{display:block;margin-top:3px;font-size:12px;color:#667085;font-weight:700}
+    .result-note{margin:18px 0 0;padding:14px 16px;border-radius:12px;background:#f8fafc;border:1px solid #e4e7ec;font-size:14px;color:#475467}
+    .copy-ok{display:none;color:var(--green-dark);font-size:13px;font-weight:700}
+    .copy-ok.show{display:inline}
+    .footer{font-size:12px;color:#667085;margin-top:20px;text-align:center}
+    @media (max-width:680px){
+      h1{font-size:28px}.hero{padding:22px 20px}.panel{padding:18px}.question{padding:17px 15px}.qtext{font-size:16px}
+      .score-slider-row{grid-template-columns:58px minmax(110px,1fr) 58px;gap:8px;padding:10px 8px}.score-end{font-size:15px}.score-end .score-live{font-size:17px}.score-cards{grid-template-columns:1fr}.chart-head-row,.chart-row{grid-template-columns:36px 1fr}.y-title{font-size:12px}
+      .axis-top{font-size:9px}
+    }
+    @media print{
+      body{background:white}.wrap{max-width:none;padding:0}.hero,.instructions,.sticky,.question,.actions,.footer{display:none!important}
+      .results{display:block!important;border:0;box-shadow:none;margin:0}.window-wrap{max-width:650px}.result-note{display:none}
+    }
+  </style>
+<!-- Workplace English adaptation based on the 20-item Johari Window Questionnaire; scoring key preserved. -->
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <h1>Johari Window Questionnaire</h1>
+    <p class="subtitle">20 workplace situations exploring how openly you share information and how willing you are to receive input from others.</p>
+    <div class="privacy">Your answers and results stay in your browser and are not sent anywhere.</div>
+  </section>
+
+  <section class="panel instructions">
+    <h2>How to answer</h2>
+    <p>For each question, you have <b>5 points</b> to divide between options A and B. Give more points to the option that better reflects what you would do.</p>
+    <p>Move the slider between A and B. The closer it is to an option, the more points that option receives. The total always equals 5.</p>
+  </section>
+
+  <div class="sticky">
+    <div class="progress-row"><span>Completed</span><span id="progressText">0 / 20</span></div>
+    <div class="bar"><div id="progressBar"></div></div>
+  </div>
+
+  <main id="questions"></main>
+
+  <section class="panel">
+    <div class="actions">
+      <button class="primary" id="calcBtn" disabled>Show my Johari Window</button>
+      <button class="secondary" id="resetBtn" type="button">Clear answers</button>
+      <span class="hint" id="completeHint">Answer all 20 questions.</span>
+    </div>
+  </section>
+
+  <section class="panel results" id="results">
+    <h2>Your result</h2>
+    <div class="score-cards">
+      <div class="score-card">
+        <div class="name">Openness to input from others</div>
+        <div class="value"><span id="solicitPct">—</span> <span class="max">из 100</span></div>
+      </div>
+      <div class="score-card">
+        <div class="name">Willingness to share information</div>
+        <div class="value"><span id="givePct">—</span> <span class="max">из 100</span></div>
+      </div>
+    </div>
+
+    <div class="window-wrap">
+      <div class="chart-head-row"><div></div><div class="x-title">Openness to input from others →</div></div>
+      <div class="chart-head-row"><div></div><div class="axis-top" id="axisTop"></div></div>
+      <div class="chart-row">
+        <div class="y-title">Willingness to share information →</div>
+        <div class="chart-box">
+          <div class="axis-left" id="axisLeft"></div>
+          <div class="johari" id="johari">
+            <div class="pane open"><div>Arena<small>known to me and to others</small></div></div>
+            <div class="pane blind"><div>Blind Spot<small>known to others, not known to me</small></div></div>
+            <div class="pane hidden"><div>Facade<small>known to me, not known to others</small></div></div>
+            <div class="pane unknown"><div>Unknown Area<small>not known to me or to others</small></div></div>
+            <div class="grid-lines" id="gridLines"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="result-note"><p><b>The Johari Window shows how we exchange information with others:</b> how willing we are to share what we know and think, and how open we are to input from other people.</p><p>The higher both scores are, the larger the <b>Arena - the area of open interaction.</b></p><p>The 0-100 scale is non-linear, so the distance between neighboring marks is not equal. This is not a good/bad rating; it is a prompt for reflection and discussion.</p></div>
+    <div class="actions">
+      <button class="secondary" id="copyBtn" type="button">Copy result</button>
+      <button class="secondary" id="savePngBtn" type="button">Save image</button>
+      <button class="secondary" id="pdfBtn" type="button">Save PDF</button>
+      <span class="copy-ok" id="copyOk">Done</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+const questions = [
+  {
+    "q": "A colleague has a strained relationship with another team member, although they need to work well together. You would:",
+    "a": "Tell your colleague that they may also be contributing to the problem and explain how their behavior seems to be affecting the other person.",
+    "b": "Stay out of it because getting involved could damage your relationship with both people."
+  },
+  {
+    "q": "You and a colleague had a heated disagreement, and since then they seem uncomfortable around you. You would:",
+    "a": "Avoid bringing it up again so the situation does not become more difficult.",
+    "b": "Raise the issue and ask how they think the disagreement has affected your working relationship."
+  },
+  {
+    "q": "A colleague starts avoiding you and becomes distant. You would:",
+    "a": "Mention what you have noticed and invite them to tell you what is on their mind.",
+    "b": "Keep your contact brief and distant, assuming that is what they prefer."
+  },
+  {
+    "q": "You are talking with two colleagues. One accidentally mentions an issue involving you and the other colleague, who does not know about it yet. You would:",
+    "a": "Change the subject and signal to the first colleague to do the same.",
+    "b": "Briefly explain to the other colleague what the issue is and suggest discussing it properly later."
+  },
+  {
+    "q": "A colleague tells you that some of your behavior makes you less effective when working with others. You would:",
+    "a": "Ask for specific examples and what changes they think might help.",
+    "b": "Disagree with the criticism and explain why you behave the way you do."
+  },
+  {
+    "q": "A colleague has been tentatively assigned to a role for which you believe they are not yet qualified. You would:",
+    "a": "Say nothing about your concerns to either the colleague or the person making the decision, and leave it to them.",
+    "b": "Share your concerns with both the colleague and the person making the decision, then leave the final decision to them."
+  },
+  {
+    "q": "You feel that a colleague is treating you and others unfairly, but no one else has said anything. You would:",
+    "a": "Ask several colleagues how they see the situation to find out whether they have noticed the same problem.",
+    "b": "Avoid asking others and wait to see whether someone else raises the issue."
+  },
+  {
+    "q": "You are preoccupied with personal matters, and a colleague tells you that you have become irritable and are snapping at people over small things. You would:",
+    "a": "Say that you have personal matters on your mind and would prefer not to be bothered for a while.",
+    "b": "Listen to what they have to say but do not explain the reasons for your behavior."
+  },
+  {
+    "q": "You have heard a harmful rumor about a member of your team, and they ask whether you know anything about it. You would:",
+    "a": "Say that you do not know anything about it and reassure them that people are unlikely to believe such a rumor anyway.",
+    "b": "Tell them exactly what you heard, when you heard it, and who you heard it from."
+  },
+  {
+    "q": "A colleague points out that you have a personal conflict with another colleague with whom it is important for you to work well. You would:",
+    "a": "Consider the comment inappropriate and say that you do not want to discuss it further.",
+    "b": "Discuss it openly to understand how the conflict may be affecting your behavior."
+  },
+  {
+    "q": "Repeated disagreements over an important issue have damaged your relationship with a colleague. You would:",
+    "a": "Be careful not to bring the issue up again so the relationship does not get worse.",
+    "b": "Point out how the disagreement is affecting the relationship and suggest discussing it until you can resolve it."
+  },
+  {
+    "q": "During a personal conversation about a colleague's problems and behavior, they suddenly suggest discussing your problems and behavior as well. You would:",
+    "a": "Redirect the conversation away from yourself, saying that you usually discuss such matters with people you are closer to.",
+    "b": "Welcome the opportunity to hear their view of you and encourage them to speak openly."
+  },
+  {
+    "q": "A colleague tells you about strong negative feelings toward another team member whom they believe treats people badly, and you completely agree. You would:",
+    "a": "Listen and also share your own view so they know where you stand.",
+    "b": "Listen but avoid expressing your own negative opinion because they might repeat what you said in confidence."
+  },
+  {
+    "q": "You suspect that a negative rumor is circulating about you and that one of your colleagues has probably heard it. You would:",
+    "a": "Avoid bringing it up and leave it to the colleague to tell you if they choose to.",
+    "b": "Ask the colleague directly what they know, even if that puts them in an uncomfortable position."
+  },
+  {
+    "q": "You have noticed several behaviors that seem to be damaging a colleague's relationships with others. You would:",
+    "a": "Tell the colleague what you have observed and how you react to it, even if you risk being seen as intrusive.",
+    "b": "Keep your opinion to yourself rather than interfere in something that is not directly your business."
+  },
+  {
+    "q": "You are talking with two colleagues when one of them accidentally mentions an issue involving you that you knew nothing about. You would:",
+    "a": "Ask them to explain the issue and share their views about it.",
+    "b": "Leave it to them to decide whether to tell you more and let them change the subject if they prefer."
+  },
+  {
+    "q": "A colleague seems preoccupied, becomes irritated over small things, and snaps at you and others. You would:",
+    "a": "Treat them more carefully for a while, assuming they may be dealing with a temporary personal problem that is none of your business.",
+    "b": "Talk to them about it and explain how their behavior is affecting other people."
+  },
+  {
+    "q": "Certain habits of a colleague have begun to irritate you so much that you find it difficult to enjoy spending time with them. You would:",
+    "a": "Say nothing directly, but distance yourself when the behavior becomes obvious.",
+    "b": "Say openly how you feel so you can clear the air and continue interacting comfortably."
+  },
+  {
+    "q": "When discussing interpersonal behavior with a colleague who is quite sensitive, you would:",
+    "a": "Avoid mentioning their weaknesses so you do not hurt their feelings.",
+    "b": "Address the weaknesses directly so they have a chance to improve how they interact with others."
+  },
+  {
+    "q": "You may soon be assigned to an important role, but you have noticed that your colleagues' attitude toward you has become rather negative. You would:",
+    "a": "Discuss your shortcomings with colleagues so you can understand where you need to improve.",
+    "b": "Try to identify your shortcomings on your own and decide what you need to improve."
+  }
+];
+
+const responses = Array(20).fill(null); // stores points for A; B=5-A
+const questionsEl = document.getElementById('questions');
+
+function renderQuestions(){
+  questions.forEach((item,i)=>{
+    const card=document.createElement('section');
+    card.className='panel question';
+    card.id='q'+(i+1);
+    card.innerHTML=`
+      <div class="qhead"><div class="qnum">${i+1}</div><div class="qtext">${item.q}</div></div>
+      <div class="answer"><div class="letter">А</div><div>${item.a}</div></div>
+      <div class="answer"><div class="letter">В</div><div>${item.b}</div></div>
+      <div class="score-label">Distribute 5 points between A and B:</div>
+      <div class="score-slider-row">
+        <div class="score-end"><span>А</span><span class="score-live" id="aVal${i}">—</span></div>
+        <div class="range-wrap">
+          <input class="score-range" type="range" min="0" max="5" step="0.5" value="2.5" data-q="${i}" aria-label="Распределение баллов между вариантами А и В">
+          <div class="slider-hint">Move the slider</div>
+        </div>
+        <div class="score-end"><span>В</span><span class="score-live" id="bVal${i}">—</span></div>
+      </div>`;
+    questionsEl.appendChild(card);
+  });
+
+  document.querySelectorAll('.score-range').forEach(slider=>{
+    const applySliderValue=()=>{
+      const q=Number(slider.dataset.q);
+      const b=Math.round(Number(slider.value));
+      slider.value=b;
+      const a=5-b;
+      responses[q]=a;
+      document.getElementById(`aVal${q}`).textContent=a;
+      document.getElementById(`bVal${q}`).textContent=b;
+      document.getElementById('q'+(q+1)).classList.add('answered');
+      updateProgress();
+    };
+    slider.addEventListener('input',applySliderValue);
+    slider.addEventListener('change',applySliderValue);
+  });
+}
+
+function updateProgress(){
+  const done=responses.filter(v=>v!==null).length;
+  document.getElementById('progressText').textContent=`${done} / 20`;
+  document.getElementById('progressBar').style.width=`${done/20*100}%`;
+  document.getElementById('calcBtn').disabled=done!==20;
+  document.getElementById('completeHint').textContent=done===20?'Done - you can view your result.':`Questions remaining: ${20-done}`;
+}
+
+function points(q,letter){
+  const a=responses[q-1];
+  return letter==='A'?a:5-a;
+}
+
+
+// Нелинейная шкала из исходного Excel.
+// Ширины интервалов 0–10 ... 90–100 пропорциональны:
+// 20, 14, 10, 7, 4, 4, 7, 10, 14, 20.
+const axisValues=[0,10,20,30,40,50,60,70,80,90,100];
+const axisPositions=[0,18.181818,30.909091,40,46.363636,50,53.636364,60,69.090909,81.818182,100];
+
+function nonlinearPosition(value){
+  const v=Math.max(0,Math.min(100,value));
+  if(v===100) return 100;
+  const i=Math.min(9,Math.floor(v/10));
+  const t=(v-i*10)/10;
+  return axisPositions[i] + t*(axisPositions[i+1]-axisPositions[i]);
+}
+
+// Таблицы норм из листа «Тест» исходного файла.
+// Возвращается точка на шкале 0–100. Для диапазона «ниже 10»
+// используем середину первого диапазона (5) только для визуального построения.
+function percentileSolicit(raw){ // Openness to input from others
+  if(raw>=39) return 99;
+  if(raw>=36) return 90;
+  if(raw>=34) return 80;
+  if(raw>=32) return 70;
+  if(raw>=30) return 60;
+  if(raw>=29) return 50;
+  if(raw>=27) return 40;
+  if(raw>=25) return 30;
+  if(raw>=21) return 20;
+  if(raw>=13) return 10;
+  return 5;
+}
+function percentileGive(raw){ // Willingness to share information
+  if(raw>=42) return 99;
+  if(raw>=38) return 90;
+  if(raw>=36) return 80;
+  if(raw>=34) return 70;
+  if(raw>=32) return 60;
+  if(raw>=30) return 50;
+  if(raw>=28) return 40;
+  if(raw>=25) return 30;
+  if(raw>=22) return 20;
+  if(raw>=13) return 10;
+  return 5;
+}
+function percentileLabel(raw,pct){
+  return raw<13 ? 'ниже 10' : String(pct);
+}
+
+function buildNonlinearAxes(){
+  const top=document.getElementById('axisTop');
+  const left=document.getElementById('axisLeft');
+  const lines=document.getElementById('gridLines');
+  top.innerHTML='';
+  left.innerHTML='';
+  lines.innerHTML='';
+  axisValues.forEach((v,i)=>{
+    const pos=axisPositions[i];
+    const sx=document.createElement('span');
+    sx.textContent=v;
+    sx.style.left=pos+'%';
+    top.appendChild(sx);
+
+    const sy=document.createElement('span');
+    sy.textContent=v;
+    sy.style.top=pos+'%';
+    left.appendChild(sy);
+
+    if(i>0 && i<axisValues.length-1){
+      const vl=document.createElement('i');
+      vl.className='grid-line-v';
+      vl.style.left=pos+'%';
+      lines.appendChild(vl);
+      const hl=document.createElement('i');
+      hl.className='grid-line-h';
+      hl.style.top=pos+'%';
+      lines.appendChild(hl);
+    }
+  });
+}
+buildNonlinearAxes();
+
+function calculate(){
+  // Openness to input from others: 2B, 3A, 5A, 7A, 8B, 10B, 12B, 14B, 16A, 20A
+  const solicitItems=[[2,'B'],[3,'A'],[5,'A'],[7,'A'],[8,'B'],[10,'B'],[12,'B'],[14,'B'],[16,'A'],[20,'A']];
+  // Willingness to share information: 1A, 4B, 6B, 9B, 11B, 13A, 15A, 17B, 18B, 19B
+  const giveItems=[[1,'A'],[4,'B'],[6,'B'],[9,'B'],[11,'B'],[13,'A'],[15,'A'],[17,'B'],[18,'B'],[19,'B']];
+  const solicit=solicitItems.reduce((s,[q,l])=>s+points(q,l),0);
+  const give=giveItems.reduce((s,[q,l])=>s+points(q,l),0);
+
+  const solicitPct=percentileSolicit(solicit);
+  const givePct=percentileGive(give);
+  document.getElementById('solicitPct').textContent=percentileLabel(solicit,solicitPct);
+  document.getElementById('givePct').textContent=percentileLabel(give,givePct);
+
+  const x=nonlinearPosition(solicitPct);
+  const y=nonlinearPosition(givePct);
+  const grid=document.getElementById('johari');
+  grid.style.gridTemplateColumns=`${x}% ${100-x}%`;
+  grid.style.gridTemplateRows=`${y}% ${100-y}%`;
+
+  const results=document.getElementById('results');
+  results.classList.add('show');
+  setTimeout(()=>results.scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+document.getElementById('calcBtn').addEventListener('click',calculate);
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  if(!confirm('Clear all answers?')) return;
+  responses.fill(null);
+  document.querySelectorAll('.score-range').forEach(s=>{s.value=2.5;});
+  document.querySelectorAll('.score-live').forEach(el=>{el.textContent='—';});
+  document.querySelectorAll('.question').forEach(c=>c.classList.remove('answered'));
+  document.getElementById('results').classList.remove('show');
+  updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+function resultText(){
+  const sp=document.getElementById('solicitPct').textContent;
+  const gp=document.getElementById('givePct').textContent;
+  return `Johari Window - my result
+Openness to input from others: ${sp}/100
+Willingness to share information: ${gp}/100`;
+}
+
+function showActionOk(message='Done'){
+  const ok=document.getElementById('copyOk');
+  ok.textContent=message;
+  ok.classList.add('show');
+  setTimeout(()=>ok.classList.remove('show'),2200);
+}
+
+async function robustCopy(text){
+  // Clipboard API работает только в безопасном контексте и часто недоступен для file://.
+  if(navigator.clipboard && window.isSecureContext){
+    try{
+      await navigator.clipboard.writeText(text);
+      return true;
+    }catch(e){}
+  }
+  // Надёжный fallback для локального HTML.
+  const ta=document.createElement('textarea');
+  ta.value=text;
+  ta.setAttribute('readonly','');
+  ta.style.position='fixed';
+  ta.style.left='-9999px';
+  ta.style.top='0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  ta.setSelectionRange(0, ta.value.length);
+  let copied=false;
+  try{
+    copied=document.execCommand('copy');
+  }catch(e){}
+  document.body.removeChild(ta);
+  return copied;
+}
+
+document.getElementById('copyBtn').addEventListener('click',async()=>{
+  const text=resultText();
+  const copied=await robustCopy(text);
+  if(copied){
+    showActionOk('Copied');
+  }else{
+    // Последний fallback: показать текст и выделить его вручную.
+    const manual=prompt('Automatic copying is unavailable. Select the text and press Ctrl+C:',text);
+    if(manual!==null) showActionOk('Text shown');
+  }
+});
+
+
+function escXml(s){
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+function splitTitle(title){
+  if(title==='BLIND SPOT') return ['BLIND','SPOT'];
+  if(title==='UNKNOWN AREA') return ['UNKNOWN','AREA'];
+  return [title];
+}
+
+function svgTextBlock(title, subtitle, x, y, w, h){
+  const cx=x+w/2, cy=y+h/2;
+  const titleLines=splitTitle(title);
+  const maxTitleChars=Math.max(...titleLines.map(s=>s.length));
+  let titleSize=Math.min(46, w/(maxTitleChars*0.62), h/(titleLines.length*2.4));
+  titleSize=Math.max(16,titleSize);
+  const subSize=Math.max(13,Math.min(22,w/14,h/7));
+
+  // If the zone is very small, keep only the title.
+  const showSub=(w>=175 && h>=145);
+  const titleLineH=titleSize*1.08;
+  const totalTitleH=titleLines.length*titleLineH;
+  const blockH=totalTitleH + (showSub ? subSize*1.7 : 0);
+  let firstY=cy-blockH/2+titleSize*0.8;
+
+  const titleSvg=titleLines.map((line,i)=>
+    `<text x="${cx}" y="${firstY+i*titleLineH}" text-anchor="middle" font-family="Arial, sans-serif" font-size="${titleSize.toFixed(1)}" font-weight="700" fill="#111827">${escXml(line)}</text>`
+  ).join('');
+
+  let subSvg='';
+  if(showSub){
+    const subY=firstY+totalTitleH+subSize*0.8;
+    subSvg=`<text x="${cx}" y="${subY}" text-anchor="middle" font-family="Arial, sans-serif" font-size="${subSize.toFixed(1)}" font-weight="400" fill="#667085">${escXml(subtitle)}</text>`;
+  }
+  return titleSvg+subSvg;
+}
+
+function buildResultSVG(){
+  const sp=Number(document.getElementById('solicitPct').textContent);
+  const gp=Number(document.getElementById('givePct').textContent);
+  const xPct=nonlinearPosition(sp);
+  const yPct=nonlinearPosition(gp);
+
+  const W=1500,H=1250;
+  const left=270,top=290,size=820;
+  const splitX=left+size*(xPct/100);
+  const splitY=top+size*(yPct/100);
+
+  const arena={x:left,y:top,w:splitX-left,h:splitY-top};
+  const blind={x:splitX,y:top,w:left+size-splitX,h:splitY-top};
+  const facade={x:left,y:splitY,w:splitX-left,h:top+size-splitY};
+  const unknown={x:splitX,y:splitY,w:left+size-splitX,h:top+size-splitY};
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <text x="90" y="78" font-family="Arial, sans-serif" font-size="44" font-weight="700" fill="#111827">Johari Window - my result</text>
+  <text x="90" y="132" font-family="Arial, sans-serif" font-size="25" font-weight="600" fill="#344054">Openness to input from others: ${sp}/100</text>
+  <text x="90" y="174" font-family="Arial, sans-serif" font-size="25" font-weight="600" fill="#344054">Willingness to share information: ${gp}/100</text>
+
+  <text x="${left+size/2}" y="240" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#344054">Openness to input from others →</text>
+  <g transform="translate(115 ${top+size/2}) rotate(-90)">
+    <text x="0" y="0" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#344054">Willingness to share information →</text>
+  </g>
+
+  <rect x="${arena.x}" y="${arena.y}" width="${arena.w}" height="${arena.h}" fill="#dff3e5"/>
+  <rect x="${blind.x}" y="${blind.y}" width="${blind.w}" height="${blind.h}" fill="#eceff3"/>
+  <rect x="${facade.x}" y="${facade.y}" width="${facade.w}" height="${facade.h}" fill="#f3f4f6"/>
+  <rect x="${unknown.x}" y="${unknown.y}" width="${unknown.w}" height="${unknown.h}" fill="#e6e8ec"/>
+
+  <rect x="${left}" y="${top}" width="${size}" height="${size}" fill="none" stroke="#667085" stroke-width="3"/>
+  <line x1="${splitX}" y1="${top}" x2="${splitX}" y2="${top+size}" stroke="#667085" stroke-width="3"/>
+  <line x1="${left}" y1="${splitY}" x2="${left+size}" y2="${splitY}" stroke="#667085" stroke-width="3"/>
+
+  ${svgTextBlock('ARENA','known to me and others',arena.x,arena.y,arena.w,arena.h)}
+  ${svgTextBlock('BLIND SPOT','known to others, not to me',blind.x,blind.y,blind.w,blind.h)}
+  ${svgTextBlock('FACADE','known to me, not to others',facade.x,facade.y,facade.w,facade.h)}
+  ${svgTextBlock('UNKNOWN AREA','not known to me or others',unknown.x,unknown.y,unknown.w,unknown.h)}
+
+  <text x="90" y="1190" font-family="Arial, sans-serif" font-size="18" font-weight="400" fill="#667085">The result is intended for reflection and discussion, not as a good/bad rating.</text>
+</svg>`;
+}
+
+document.getElementById('savePngBtn').addEventListener('click',()=>{
+  const svg=buildResultSVG();
+  const blob=new Blob([svg],{type:'image/svg+xml;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const img=new Image();
+
+  img.onload=()=>{
+    const canvas=document.createElement('canvas');
+    canvas.width=1500;
+    canvas.height=1250;
+    const ctx=canvas.getContext('2d');
+    ctx.fillStyle='#ffffff';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(img,0,0);
+    URL.revokeObjectURL(url);
+
+    canvas.toBlob((pngBlob)=>{
+      if(!pngBlob){
+        showActionOk('Could not save');
+        return;
+      }
+      const pngUrl=URL.createObjectURL(pngBlob);
+      const a=document.createElement('a');
+      a.href=pngUrl;
+      a.download='johari_window_result.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(()=>URL.revokeObjectURL(pngUrl),1000);
+      showActionOk('Image saved');
+    },'image/png');
+  };
+  img.onerror=()=>{
+    URL.revokeObjectURL(url);
+    showActionOk('Could not save');
+  };
+  img.src=url;
+});
+
+
+function dataUrlToBytes(dataUrl){
+  const base64=dataUrl.split(',')[1];
+  const bin=atob(base64);
+  const bytes=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
+  return bytes;
+}
+
+function concatBytes(parts){
+  let total=0;
+  parts.forEach(p=>total+=p.length);
+  const out=new Uint8Array(total);
+  let offset=0;
+  parts.forEach(p=>{ out.set(p,offset); offset+=p.length; });
+  return out;
+}
+
+function asciiBytes(s){
+  return new TextEncoder().encode(s);
+}
+
+function buildSingleImagePdf(jpegBytes, imgW, imgH){
+  // A4 landscape in PDF points: 842 x 595.
+  const pageW=842, pageH=595;
+  const margin=18;
+  const maxW=pageW-margin*2, maxH=pageH-margin*2;
+  const scale=Math.min(maxW/imgW,maxH/imgH);
+  const drawW=imgW*scale, drawH=imgH*scale;
+  const x=(pageW-drawW)/2, y=(pageH-drawH)/2;
+
+  const objects=[];
+  objects[1]=asciiBytes('<< /Type /Catalog /Pages 2 0 R >>');
+  objects[2]=asciiBytes('<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
+  objects[3]=asciiBytes(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageW} ${pageH}] /Resources << /XObject << /Im0 5 0 R >> >> /Contents 4 0 R >>`);
+
+  const content=`q\n${drawW.toFixed(3)} 0 0 ${drawH.toFixed(3)} ${x.toFixed(3)} ${y.toFixed(3)} cm\n/Im0 Do\nQ\n`;
+  const contentBytes=asciiBytes(content);
+  objects[4]=concatBytes([
+    asciiBytes(`<< /Length ${contentBytes.length} >>\nstream\n`),
+    contentBytes,
+    asciiBytes('endstream')
+  ]);
+
+  objects[5]=concatBytes([
+    asciiBytes(`<< /Type /XObject /Subtype /Image /Width ${imgW} /Height ${imgH} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpegBytes.length} >>\nstream\n`),
+    jpegBytes,
+    asciiBytes('\nendstream')
+  ]);
+
+  const header=asciiBytes('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n');
+  const parts=[header];
+  const offsets=[0];
+  let current=header.length;
+
+  for(let i=1;i<=5;i++){
+    offsets[i]=current;
+    const prefix=asciiBytes(`${i} 0 obj\n`);
+    const suffix=asciiBytes('\nendobj\n');
+    parts.push(prefix,objects[i],suffix);
+    current+=prefix.length+objects[i].length+suffix.length;
+  }
+
+  const xrefPos=current;
+  let xref=`xref\n0 6\n0000000000 65535 f \n`;
+  for(let i=1;i<=5;i++){
+    xref+=String(offsets[i]).padStart(10,'0')+' 00000 n \n';
+  }
+  xref+=`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xrefPos}\n%%EOF`;
+  parts.push(asciiBytes(xref));
+  return concatBytes(parts);
+}
+
+document.getElementById('pdfBtn').addEventListener('click',()=>{
+  const svg=buildResultSVG();
+  const svgBlob=new Blob([svg],{type:'image/svg+xml;charset=utf-8'});
+  const svgUrl=URL.createObjectURL(svgBlob);
+  const img=new Image();
+
+  img.onload=()=>{
+    const canvas=document.createElement('canvas');
+    canvas.width=1500;
+    canvas.height=1250;
+    const ctx=canvas.getContext('2d');
+    ctx.fillStyle='#ffffff';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    URL.revokeObjectURL(svgUrl);
+
+    // JPEG is embedded directly into a minimal one-page PDF.
+    const jpegData=canvas.toDataURL('image/jpeg',0.95);
+    const jpegBytes=dataUrlToBytes(jpegData);
+    const pdfBytes=buildSingleImagePdf(jpegBytes,canvas.width,canvas.height);
+    const pdfBlob=new Blob([pdfBytes],{type:'application/pdf'});
+    const pdfUrl=URL.createObjectURL(pdfBlob);
+
+    const a=document.createElement('a');
+    a.href=pdfUrl;
+    a.download='johari_window_result.pdf';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(pdfUrl),1500);
+    showActionOk('PDF saved');
+  };
+
+  img.onerror=()=>{
+    URL.revokeObjectURL(svgUrl);
+    showActionOk('Could not create PDF');
+  };
+
+  img.src=svgUrl;
+});
+
+renderQuestions();
+updateProgress();
+</script>
+</body>
+</html>
