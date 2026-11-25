@@ -23,6 +23,7 @@ const storageKey = 'hochland-flex-leadership-v1';
 const app = document.querySelector('#app');
 const emptyState = () => ({ started: false, completed: false, index: 0, answers: questions.map(() => null) });
 let state = readState();
+let showWelcome = location.hash !== '#razbor';
 let storageAvailable = true;
 
 function readState() {
@@ -51,14 +52,25 @@ function saveState() {
 
 function render() {
   const reviewOpen = location.hash === '#razbor';
-  if (state.completed) {
-    app.innerHTML = reviewOpen ? resultView() : completedView();
+  if (reviewOpen && state.completed) {
+    app.innerHTML = resultView();
+  } else if (showWelcome) {
+    app.innerHTML = welcomeView();
+  } else if (state.completed) {
+    app.innerHTML = completedView();
   } else {
     app.innerHTML = state.started ? questionView() : welcomeView();
   }
 }
 
 function welcomeView() {
+  const hasAnswers = state.answers.some((answer) => answer !== null);
+  const button = state.completed
+    ? '<button data-action="reset">Пройти заново</button>'
+    : `<button data-action="start">${hasAnswers ? 'Продолжить' : 'Начать'}</button>`;
+  const savedNote = state.completed
+    ? 'Вы уже прошли опросник. Ваш результат доступен по ссылке для разбора.'
+    : hasAnswers ? 'Можно продолжить с того места, где вы остановились.' : '';
   return `
     <section class="panel intro">
       <p class="label">Модуль «Ситуационное руководство»</p>
@@ -66,7 +78,9 @@ function welcomeView() {
       <p class="lede">Представьте, что вы руководитель в каждой из ситуаций. Выберите одно действие, с которого вы, скорее всего, начали бы при описанных условиях.</p>
       <div class="meta"><span>16 ситуаций</span><span>Около 15 минут</span></div>
       <p class="muted">Ответы сохраняются в этом браузере. Личный результат откроется по ссылке для разбора, которую даст тренер.</p>
-      <div class="controls"><button data-action="start">Начать</button></div>
+      ${savedNote ? `<p>${savedNote}</p>` : ''}
+      <div class="controls">${button}</div>
+      ${state.completed ? resetDialog() : ''}
     </section>`;
 }
 
@@ -256,6 +270,7 @@ app.addEventListener('submit', (event) => {
 app.addEventListener('click', (event) => {
   switch (event.target.closest('button')?.dataset.action) {
     case 'start':
+      showWelcome = false;
       state.started = true;
       navigate();
       break;
@@ -284,6 +299,7 @@ app.addEventListener('click', (event) => {
 });
 
 window.addEventListener('hashchange', () => {
+  showWelcome = location.hash !== '#razbor';
   render();
   app.querySelector('h1').focus({ preventScroll: true });
 });
