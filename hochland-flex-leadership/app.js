@@ -8,13 +8,13 @@ const styles = {
   S4: { name: 'Делегирующий', actions: 'Согласовать результат и рамки, оставив способ работы сотруднику.' }
 };
 const levels = {
-  D1: 'Впервые берётся за задачу и хочет попробовать',
-  D2: 'Освоил часть задачи, столкнулся с трудностями',
-  D3: 'Умеет выполнять задачу, но сомневается',
-  D4: 'Умеет выполнять задачу и готов действовать самостоятельно'
+  D1: { description: 'Сотрудник впервые берётся за задачу и хочет попробовать.', style: 'S1' },
+  D2: { description: 'Сотрудник освоил часть задачи, но после трудностей теряет уверенность или желание продолжать.', style: 'S2' },
+  D3: { description: 'Сотрудник умеет выполнять задачу, но сейчас сомневается.', style: 'S3' },
+  D4: { description: 'Сотрудник умеет выполнять задачу и готов действовать самостоятельно.', style: 'S4' }
 };
 const practicePrompts = {
-  D1: 'Какую часть новой задачи стоит сначала показать на примере?',
+  D1: 'Вспомните сотрудника, который берётся за новую задачу. Что вы покажете ему на примере перед первой самостоятельной попыткой?',
   D2: 'Какие шаги стоит уточнить и какие трудности обсудить с сотрудником?',
   D3: 'Что поможет сотруднику разобраться с сомнениями и самому выбрать, как действовать?',
   D4: 'Какие рамки достаточно согласовать, чтобы сотрудник выбрал способ работы сам?'
@@ -126,7 +126,7 @@ function completedView() {
 
 function summarize(answers) {
   const counts = Object.fromEntries(Object.keys(styles).map((style) => [style, 0]));
-  const byLevel = Object.fromEntries(Object.keys(levels).map((level) => [level, { total: 0, matches: 0, other: {} }]));
+  const byLevel = Object.fromEntries(Object.keys(levels).map((level) => [level, { total: 0, matches: 0 }]));
   let matches = 0;
   questions.forEach((question, index) => {
     const answer = answers[index];
@@ -137,32 +137,32 @@ function summarize(answers) {
     if (answer === question.recommended) {
       group.matches++;
       matches++;
-    } else {
-      group.other[style] = (group.other[style] ?? 0) + 1;
     }
   });
   return { counts, byLevel, matches };
 }
 
-function observation(result) {
+function levelsToReview(result) {
+  if (result.matches === questions.length) return [];
   const groups = Object.entries(result.byLevel);
   const lowest = Math.min(...groups.map(([, group]) => group.matches));
-  if (result.matches === questions.length) {
-    return 'Ваши ответы совпали с рекомендациями во всех четырёх типах ситуаций. Какой из этих подходов вам труднее всего применять в работе?';
+  return groups.filter(([, group]) => group.matches === lowest);
+}
+
+function observation(reviewLevels) {
+  if (reviewLevels.length === 0) {
+    return 'Для разбора выберите ситуацию, которая ближе всего к вашей работе.';
   }
-  const lowestGroups = groups.filter(([, group]) => group.matches === lowest);
-  const repeated = lowestGroups.flatMap(([level, group]) =>
-    Object.entries(group.other).filter(([, count]) => count > 1).map(([style, count]) => ({ level, style, count }))
-  ).sort((a, b) => b.count - a.count);
-  if (repeated.length && (repeated.length === 1 || repeated[0].count > repeated[1].count)) {
-    const { level, style, count } = repeated[0];
-    return `В ситуациях «${levels[level]}» вы ${count} раза выбрали стиль «${styles[style].name.toLowerCase()}». ${practicePrompts[level]}`;
+  if (reviewLevels.length > 1) {
+    const codes = reviewLevels.map(([level]) => level);
+    const list = new Intl.ListFormat('ru').format(codes);
+    const { matches, total } = reviewLevels[0][1];
+    return `Меньше всего совпадений на уровнях ${list} (по ${matches} из ${total}). Возьмите для разбора одну из этих ситуаций.`;
   }
-  if (lowestGroups.length === 1) {
-    const [level, group] = lowestGroups[0];
-    return `Меньше всего совпадений в ситуациях «${levels[level]}» — ${group.matches} из ${group.total}. ${practicePrompts[level]}`;
-  }
-  return 'Откройте разбор и выберите ситуацию, где ваш ответ отличается от рекомендации. Какая деталь в описании повлияла на ваш выбор?';
+  const [[level, group]] = reviewLevels;
+  const { description, style } = levels[level];
+  const { name, actions } = styles[style];
+  return `<strong>Что разобрать. ${level}</strong> (${group.matches} из ${group.total}). ${description} По модели здесь подходит ${style} - «${name}». ${actions}`;
 }
 
 function frequencyNote(counts) {
@@ -176,15 +176,19 @@ function frequencyNote(counts) {
 
 function resultView() {
   const result = summarize(state.answers);
+  const reviewLevels = levelsToReview(result);
+  const practiceQuestion = reviewLevels.length === 1
+    ? practicePrompts[reviewLevels[0][0]]
+    : 'Вспомните похожую ситуацию из своей работы. Какой стиль подошёл бы сотруднику и что вы сделаете в следующем разговоре?';
   return `
     <section class="panel">
       <div class="result-head"><p class="label">Гибкое лидерство</p><h1 tabindex="-1">Ваш выбор в ситуациях</h1></div>
       <div class="section">
         <h2>Совпадения с рекомендациями модели</h2>
         <p class="score">${result.matches} из ${questions.length}</p>
-        <p class="readout">${observation(result)}</p>
+        <p class="readout">${observation(reviewLevels)}</p>
         <ul class="breakdown">
-          ${Object.entries(result.byLevel).map(([level, group]) => `<li><span>${levels[level]}</span><strong>${group.matches} из ${group.total}</strong></li>`).join('')}
+          ${Object.entries(result.byLevel).map(([level, group]) => `<li><span>${level}. ${levels[level].description}</span><strong>${group.matches} из ${group.total}</strong></li>`).join('')}
         </ul>
       </div>
       <div class="section">
@@ -223,7 +227,7 @@ function resultView() {
           </ol>
         </details>
       </div>
-      <aside class="forward"><h3>Вопрос для практики</h3><p>В какой рабочей задаче вы могли бы добавить структуры, обсудить сомнения или дать больше самостоятельности? Что вы сделаете в следующем разговоре?</p></aside>
+      <aside class="forward"><h3>Как применить в работе</h3><p>${practiceQuestion}</p></aside>
       <div class="controls">
         <button data-action="print">Сохранить PDF</button>
         <button class="secondary" data-action="reset">Пройти заново</button>
