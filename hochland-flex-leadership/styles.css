@@ -152,7 +152,7 @@ fieldset { min-inline-size: 0; border: 0; padding: 0; margin: 0; }
 .breakdown li { display: flex; gap: 12px; justify-content: space-between; border-bottom: 1px solid var(--line); padding: 8px 0; }
 .breakdown strong { white-space: nowrap; }
 .style-bars { display: grid; gap: 8px; margin: 12px 0 0; }
-.style-row { display: grid; grid-template-columns: minmax(153px, 205px) 1fr 2ch; gap: 9px; align-items: center; }
+.style-row { display: grid; grid-template-columns: 226px minmax(0, 1fr) 2ch; gap: 9px; align-items: center; }
 .style-row progress { margin: 0; height: 8px; }
 .model-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
 .model-item { padding: 12px; border: 1px solid var(--line); }
@@ -171,6 +171,8 @@ summary { cursor: pointer; color: var(--graphite); font-weight: 700; }
   .intro:has([data-action="start"])::before, .intro:has([data-action="start"])::after { display: none; }
 }
 @media (max-width: 440px) {
+  .style-row { grid-template-columns: minmax(0, 3fr) minmax(40px, 1fr) 2ch; }
+  .style-row > span { font-size: .875rem; overflow-wrap: anywhere; }
   .masthead-inner { min-height: 66px; gap: 10px; }
   .wordmark { gap: 9px; }
   .wordmark img { width: 34px; }

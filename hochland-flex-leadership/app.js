@@ -191,8 +191,10 @@ function resultView() {
         <h2>Какие стили вы выбирали</h2>
         <p class="muted">${frequencyNote(result.counts)}</p>
         <div class="style-bars">
-          ${Object.entries(styles).map(([id, style]) => `
-            <div class="style-row"><span>${style.name}</span><progress aria-label="${style.name}" max="${questions.length}" value="${result.counts[id]}"></progress><strong>${result.counts[id]}</strong></div>`).join('')}
+          ${Object.entries(styles).map(([id, style]) => {
+            const label = `${id} - «${style.name}»`;
+            return `<div class="style-row"><span>${label}</span><progress aria-label="${label}" max="${questions.length}" value="${result.counts[id]}"></progress><strong>${result.counts[id]}</strong></div>`;
+          }).join('')}
         </div>
       </div>
       <div class="section">
