@@ -148,6 +148,8 @@ fieldset { min-inline-size: 0; border: 0; padding: 0; margin: 0; }
 .section > p { margin-top: 8px; }
 .score { display: inline-block; color: var(--green-ink); font-weight: 750; font-size: clamp(1.5rem, 4vw, 2.1rem); }
 .readout { background: var(--green-wash); border-left: 4px solid var(--green); padding: 13px 16px; margin-top: 13px; }
+.readout > p { margin: 8px 0 0; }
+.readout > p:first-child { margin-top: 0; }
 .breakdown { list-style: none; padding: 0; margin: 12px 0 0; }
 .breakdown li { display: flex; gap: 12px; justify-content: space-between; border-bottom: 1px solid var(--line); padding: 8px 0; }
 .breakdown strong { white-space: nowrap; }

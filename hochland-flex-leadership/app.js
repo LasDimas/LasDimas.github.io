@@ -151,18 +151,20 @@ function levelsToReview(result) {
 
 function observation(reviewLevels) {
   if (reviewLevels.length === 0) {
-    return 'Для разбора выберите ситуацию, которая ближе всего к вашей работе.';
+    return '<p>Для разбора выберите ситуацию, которая ближе всего к вашей работе.</p>';
   }
   if (reviewLevels.length > 1) {
     const codes = reviewLevels.map(([level]) => level);
     const list = new Intl.ListFormat('ru').format(codes);
     const { matches, total } = reviewLevels[0][1];
-    return `Меньше всего совпадений на уровнях ${list} (по ${matches} из ${total}). Возьмите для разбора одну из этих ситуаций.`;
+    return `<h3>Меньше всего совпадений на уровнях ${list}</h3><p>На каждом из этих уровней совпадений с моделью по <strong>${matches} из ${total}</strong>.</p>`;
   }
   const [[level, group]] = reviewLevels;
   const { description, style } = levels[level];
   const { name, actions } = styles[style];
-  return `<strong>Что разобрать. ${level}</strong> (${group.matches} из ${group.total}). ${description} По модели здесь подходит ${style} - «${name}». ${actions}`;
+  return `<h3>Меньше всего совпадений на уровне ${level}</h3>
+    <p>Результат на этом уровне — <strong>${group.matches} из ${group.total}</strong>. ${description}</p>
+    <p>Модель рекомендует <strong>${style} - «${name}»</strong>. ${actions}</p>`;
 }
 
 function frequencyNote(counts) {
@@ -186,7 +188,7 @@ function resultView() {
       <div class="section">
         <h2>Совпадения с рекомендациями модели</h2>
         <p class="score">${result.matches} из ${questions.length}</p>
-        <p class="readout">${observation(reviewLevels)}</p>
+        <div class="readout">${observation(reviewLevels)}</div>
         <ul class="breakdown">
           ${Object.entries(result.byLevel).map(([level, group]) => `<li><span>${level}. ${levels[level].description}</span><strong>${group.matches} из ${group.total}</strong></li>`).join('')}
         </ul>
